@@ -1,7 +1,5 @@
-
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,44 +10,69 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#4f46e5',
-                        secondary: '#1e1b4b',
-                        accent: '#10b981',
-                        dark: '#0f172a',
-                        light: {
-                            bg: '#f8fafc',
-                            sidebar: '#ffffff',
-                            text: '#1e293b',
-                            hover: '#e2e8f0'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'Calibri', 'sans-serif'],
-                        display: ['Arial', 'sans-serif']
-                    },
-                    boxShadow: {
-                        'soft': '0 4px 14px 0 rgba(0, 0, 0, 0.05)',
-                        'soft-lg': '0 10px 28px rgba(0, 0, 0, 0.08)'
-                    }
-                }
-            }
-        }
-    </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
         body {
-            font-family: 'Inter', 'Calibri', sans-serif;
-            background-color: #f8fafc;
-            color: #1e293b;
+            font-family: 'Inter', 'Playfair Display', sans-serif;
+            background-color: #DCEEF3 !important;
+            color: #333333;
             margin: 0;
             padding: 0;
             overflow: hidden;
+        }
+
+        /* Màu sắc theo yêu cầu */
+        :root {
+            --bg-total: #DCEEF3;
+            --input-bg: #F4F7F8;
+            --card-bg: #F8F9F6;
+            --border-light: #E3E6E8;
+            --text-primary: #333333;
+            --text-secondary: #8A8F95;
+            --button-cyan: #6EC6D9;
+            --accent-orange: #F4A261;
+        }
+
+        /* Áp dụng màu nền tổng thể */
+        .bg-total {
+            background-color: var(--bg-total) !important;
+        }
+
+        .bg-input {
+            background-color: var(--input-bg) !important;
+        }
+
+        .bg-card {
+            background-color: var(--card-bg) !important;
+        }
+
+        .border-custom {
+            border-color: var(--border-light) !important;
+        }
+
+        .text-primary {
+            color: var(--text-primary) !important;
+        }
+
+        .text-secondary {
+            color: var(--text-secondary) !important;
+        }
+
+        .bg-button {
+            background-color: var(--button-cyan) !important;
+        }
+
+        .text-accent {
+            color: var(--accent-orange) !important;
+        }
+
+        .border-accent {
+            border-color: var(--accent-orange) !important;
+        }
+
+        .bg-accent {
+            background-color: var(--accent-orange) !important;
         }
 
         .hide-scrollbar::-webkit-scrollbar {
@@ -61,214 +84,61 @@
             scrollbar-width: none;
         }
 
-        .code-block {
-            position: relative;
-            margin: 1rem 0;
-            border-radius: 0.75rem;
-            overflow: hidden;
-            background-color: #1e293b;
-            border: 1px solid #334155;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        .code-header {
-            font-family: 'Fira Code', monospace;
-            user-select: none;
-            background-color: #334155;
-            color: #e2e8f0;
-            font-size: 0.85rem;
-        }
-
-        .copy-code-btn {
-            transition: all 0.2s;
-            cursor: pointer;
-            color: #94a3b8;
-            font-size: 0.8rem;
-        }
-
-        .copy-code-btn:hover {
-            color: #ffffff;
-        }
-
-        pre {
-            margin: 0 !important;
-            padding: 1rem !important;
-            background-color: #1e293b !important;
-            border-radius: 0 0 0.75rem 0.75rem;
-            color: #f8fafc;
-            overflow-x: auto;
-        }
-
-        .markdown p {
-            margin-bottom: 0.75rem;
-            line-height: 1.6;
-            color: #334155;
-        }
-
-        .markdown ul,
-        .markdown ol {
-            margin-bottom: 0.75rem;
-            padding-left: 1.5rem;
-        }
-
-        .markdown li {
-            margin-bottom: 0.5rem;
-            color: #334155;
-        }
-
-        .markdown code:not(pre code) {
-            background-color: #e2e8f0;
-            padding: 0.2rem 0.4rem;
-            border-radius: 0.25rem;
-            font-family: 'Fira Code', monospace;
-            color: #334155;
-            font-size: 0.9em;
-        }
-
-        .markdown strong {
-            font-weight: 600;
-            color: #1e293b;
-        }
-
-        .markdown em {
-            font-style: italic;
-        }
-
-        .markdown h1,
-        .markdown h2,
-        .markdown h3,
-        .markdown h4 {
-            font-weight: 600;
-            margin-top: 1.25rem;
-            margin-bottom: 0.75rem;
-            color: #1e293b;
-            font-family: 'Arial', sans-serif;
-        }
-
-        .markdown h1 {
-            font-size: 1.5rem;
-            line-height: 2rem;
-        }
-
-        .markdown h2 {
-            font-size: 1.25rem;
-            line-height: 1.75rem;
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 0.5rem;
-        }
-
-        .markdown h3 {
-            font-size: 1.125rem;
-            line-height: 1.75rem;
-        }
-
-        .markdown h4 {
-            font-size: 1rem;
-            line-height: 1.5rem;
-        }
-
-        .markdown table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
-            border-radius: 0.75rem;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .markdown th,
-        .markdown td {
-            padding: 0.75rem 1rem;
-            border: 1px solid #e2e8f0;
-            text-align: left;
-        }
-
-        .markdown th {
-            background-color: #f1f5f9;
-            font-weight: 600;
-        }
-
-        .markdown blockquote {
-            border-left: 4px solid #94a3b8;
-            padding-left: 1rem;
-            margin: 1.25rem 0;
-            color: #64748b;
-            border-radius: 0.5rem;
-            background-color: #f8fafc;
-        }
-
-        .transition-all {
-            transition-property: all;
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-            transition-duration: 150ms;
-        }
-
         #map {
             height: 100%;
             width: 100%;
             z-index: 10;
         }
 
-        /* Battle box styles - đã chỉnh sửa */
         .battle-box {
-            background-color: #ffffff;
+            background-color: var(--card-bg);
             border-radius: 0.75rem;
             padding: 1rem;
             margin-bottom: 1rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-light);
             transition: transform 0.2s, box-shadow 0.2s;
             width: 100%;
         }
 
         .battle-box:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            border-color: var(--accent-orange);
         }
 
         .battle-box h3 {
             font-size: 1rem;
             font-weight: 600;
             margin-bottom: 0.75rem;
-            color: #4f46e5;
+            color: var(--accent-orange);
             display: flex;
             align-items: center;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Playfair Display', serif;
         }
 
         .battle-box h3 i {
             margin-right: 0.5rem;
-            color: #4f46e5;
-        }
-
-        .battle-box h3 i.fa-star {
-            color: #f43f5e;
-        }
-
-        .battle-box ul {
-            list-style-type: disc;
-            padding-left: 1.5rem;
-            margin: 0.5rem 0;
+            color: var(--accent-orange);
         }
 
         .battle-box p,
         .battle-box li {
             font-size: 0.95rem;
             line-height: 1.6;
-            color: #475569;
+            color: var(--text-primary);
         }
 
-        /* Mindmap styles - đã chỉnh sửa */
         .mindmap-container {
             width: 100%;
             height: 400px;
-            background-color: #ffffff;
+            background-color: var(--card-bg);
             border-radius: 0.75rem;
             margin: 1rem 0;
             overflow: auto;
             position: relative;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-light);
             transition: all 0.3s ease;
             cursor: pointer;
         }
@@ -283,7 +153,7 @@
             margin: 0;
             border-radius: 0;
             padding: 1rem;
-            background-color: rgba(255, 255, 255, 0.95);
+            background-color: var(--card-bg);
         }
 
         .mindmap {
@@ -291,7 +161,6 @@
             height: 100%;
             min-height: 400px;
             padding: 1rem;
-            background-color: transparent !important;
         }
 
         .mindmap-title {
@@ -299,12 +168,12 @@
             font-weight: 600;
             margin: 0;
             padding: 1rem;
-            color: #4f46e5;
+            color: var(--accent-orange);
             font-size: 1.1rem;
-            border-bottom: 1px solid #e2e8f0;
-            background-color: #f8fafc;
+            border-bottom: 1px solid var(--border-light);
+            background-color: var(--card-bg);
             border-radius: 0.75rem 0.75rem 0 0;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Playfair Display', serif;
         }
 
         .loading-mindmap {
@@ -312,22 +181,23 @@
             justify-content: center;
             align-items: center;
             height: 100%;
-            color: #64748b;
+            color: var(--text-secondary);
             font-size: 0.95rem;
         }
 
         .mindmap-error {
-            color: #ef4444;
+            color: var(--accent-orange);
             padding: 1.5rem;
             text-align: center;
             font-size: 0.95rem;
         }
 
-        /* Custom Mermaid styles với màu sắc đa dạng */
+        /* CSS cho Mermaid với màu sắc mới */
         .mermaid .node rect,
         .mermaid .node circle,
         .mermaid .node polygon {
-            fill: #ffffff !important;
+            fill: var(--card-bg) !important;
+            stroke: var(--accent-orange) !important;
             stroke-width: 2px !important;
             rx: 8px !important;
             ry: 8px !important;
@@ -335,161 +205,198 @@
         }
 
         .mermaid .node text {
-            fill: #1e293b !important;
-            font-family: 'Inter', sans-serif !important;
+            fill: var(--text-primary) !important;
+            font-family: 'Playfair Display', serif !important;
             font-size: 14px !important;
             font-weight: 500 !important;
         }
 
         .mermaid .edgePath .path {
-            stroke: #94a3b8 !important;
+            stroke: var(--accent-orange) !important;
             stroke-width: 2px !important;
         }
 
         .mermaid .arrowheadPath {
-            fill: #94a3b8 !important;
+            fill: var(--accent-orange) !important;
         }
 
-        /* Color themes for mindmap nodes */
-        .mermaid .root-node rect {
-            fill: #4f46e5 !important;
-            stroke: #3730a3 !important;
+        /* Các class cho các node với màu sắc khác nhau */
+        .mermaid .root-node rect,
+        .mermaid .root-node circle,
+        .mermaid .root-node polygon {
+            fill: var(--card-bg) !important;
+            stroke: var(--accent-orange) !important;
+            stroke-width: 3px !important;
         }
 
         .mermaid .root-node text {
-            fill: #ffffff !important;
+            fill: var(--text-primary) !important;
+            font-weight: 700 !important;
+            font-size: 16px !important;
         }
 
-        .mermaid .time-node rect {
-            fill: #10b981 !important;
-            stroke: #059669 !important;
+        .mermaid .time-node rect,
+        .mermaid .time-node circle,
+        .mermaid .time-node polygon {
+            fill: #E6F3F5 !important;
+            stroke: #4A90E2 !important;
         }
 
         .mermaid .time-node text {
-            fill: #ffffff !important;
+            fill: var(--text-primary) !important;
         }
 
-        .mermaid .location-node rect {
-            fill: #0ea5e9 !important;
-            stroke: #0284c7 !important;
+        .mermaid .location-node rect,
+        .mermaid .location-node circle,
+        .mermaid .location-node polygon {
+            fill: #E8F4E8 !important;
+            stroke: #2E7D32 !important;
         }
 
         .mermaid .location-node text {
-            fill: #ffffff !important;
+            fill: var(--text-primary) !important;
         }
 
-        .mermaid .faction-node rect {
-            fill: #f59e0b !important;
-            stroke: #d97706 !important;
+        .mermaid .faction-node rect,
+        .mermaid .faction-node circle,
+        .mermaid .faction-node polygon {
+            fill: #FFF3E0 !important;
+            stroke: #F4A261 !important;
         }
 
         .mermaid .faction-node text {
-            fill: #ffffff !important;
+            fill: var(--text-primary) !important;
         }
 
-        .mermaid .commander-node rect {
-            fill: #ec4899 !important;
-            stroke: #db2777 !important;
+        .mermaid .commander-node rect,
+        .mermaid .commander-node circle,
+        .mermaid .commander-node polygon {
+            fill: #FFE5E5 !important;
+            stroke: #D32F2F !important;
         }
 
         .mermaid .commander-node text {
-            fill: #ffffff !important;
+            fill: var(--text-primary) !important;
         }
 
-        .mermaid .outcome-node rect {
-            fill: #8b5cf6 !important;
-            stroke: #7c3aed !important;
+        .mermaid .outcome-node rect,
+        .mermaid .outcome-node circle,
+        .mermaid .outcome-node polygon {
+            fill: #E8EAF6 !important;
+            stroke: #5C6BC0 !important;
         }
 
         .mermaid .outcome-node text {
-            fill: #ffffff !important;
+            fill: var(--text-primary) !important;
         }
 
-        .mermaid .significance-node rect {
-            fill: #14b8a6 !important;
-            stroke: #0d9488 !important;
+        .mermaid .significance-node rect,
+        .mermaid .significance-node circle,
+        .mermaid .significance-node polygon {
+            fill: #F3E5F5 !important;
+            stroke: #7B1FA2 !important;
         }
 
         .mermaid .significance-node text {
-            fill: #ffffff !important;
+            fill: var(--text-primary) !important;
         }
 
-        .mermaid .achievement-node rect {
-            fill: #f97316 !important;
-            stroke: #ea580c !important;
+        .mermaid .achievement-node rect,
+        .mermaid .achievement-node circle,
+        .mermaid .achievement-node polygon {
+            fill: #E1F5FE !important;
+            stroke: #0288D1 !important;
         }
 
         .mermaid .achievement-node text {
-            fill: #ffffff !important;
+            fill: var(--text-primary) !important;
         }
 
-        .mermaid .purpose-node rect {
-            fill: #a855f7 !important;
-            stroke: #9333ea !important;
+        .mermaid .purpose-node rect,
+        .mermaid .purpose-node circle,
+        .mermaid .purpose-node polygon {
+            fill: #FFF8E1 !important;
+            stroke: #F4A261 !important;
         }
 
         .mermaid .purpose-node text {
-            fill: #ffffff !important;
+            fill: var(--text-primary) !important;
         }
 
-        .mermaid .architecture-node rect {
-            fill: #3b82f6 !important;
-            stroke: #2563eb !important;
+        .mermaid .architecture-node rect,
+        .mermaid .architecture-node circle,
+        .mermaid .architecture-node polygon {
+            fill: #E0F2F1 !important;
+            stroke: #00796B !important;
         }
 
         .mermaid .architecture-node text {
-            fill: #ffffff !important;
+            fill: var(--text-primary) !important;
         }
 
-        .mermaid .content-node rect {
-            fill: #84cc16 !important;
-            stroke: #65a30d !important;
+        .mermaid .content-node rect,
+        .mermaid .content-node circle,
+        .mermaid .content-node polygon {
+            fill: #FCE4EC !important;
+            stroke: #C2185B !important;
         }
 
         .mermaid .content-node text {
-            fill: #ffffff !important;
+            fill: var(--text-primary) !important;
         }
 
-        .mermaid .builder-node rect {
-            fill: #f43f5e !important;
-            stroke: #e11d48 !important;
+        .mermaid .builder-node rect,
+        .mermaid .builder-node circle,
+        .mermaid .builder-node polygon {
+            fill: #E8F5E9 !important;
+            stroke: #388E3C !important;
         }
 
         .mermaid .builder-node text {
-            fill: #ffffff !important;
+            fill: var(--text-primary) !important;
         }
 
-        .mermaid .dynasty-node rect {
-            fill: #06b6d4 !important;
-            stroke: #0891b2 !important;
+        .mermaid .dynasty-node rect,
+        .mermaid .dynasty-node circle,
+        .mermaid .dynasty-node polygon {
+            fill: #FFF3E0 !important;
+            stroke: #F4A261 !important;
         }
 
         .mermaid .dynasty-node text {
-            fill: #ffffff !important;
+            fill: var(--text-primary) !important;
         }
 
-        /* History info box - đã chỉnh sửa */
         .history-info-box {
             padding: 1.5rem;
-            background-color: #ffffff;
+            background-color: var(--card-bg);
             border-radius: 0.75rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             margin-bottom: 1.5rem;
-            border: 1px solid #e2e8f0;
-            border-left: 4px solid #4f46e5;
+            border: 1px solid var(--border-light);
+            border-left: 4px solid var(--accent-orange);
             transition: all 0.3s ease;
             width: 100%;
+            position: relative;
         }
 
-        /* Result container - đã chỉnh sửa */
+        .history-info-box h2 {
+            color: var(--accent-orange);
+            font-family: 'Playfair Display', serif;
+        }
+
+        .history-info-box p {
+            color: var(--text-primary);
+        }
+
         .result-container {
             padding: 1.5rem;
-            background-color: #ffffff;
+            background-color: var(--card-bg);
             border-radius: 0.75rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             margin-bottom: 1.5rem;
-            border: 1px solid #e2e8f0;
-            border-left: 4px solid #10b981;
+            border: 1px solid var(--border-light);
+            border-left: 4px solid var(--accent-orange);
             transition: all 0.3s ease;
             width: 100%;
         }
@@ -497,48 +404,34 @@
         .result-container .result-title {
             font-size: 1.25rem;
             font-weight: 600;
-            color: #1e293b;
+            color: var(--accent-orange);
             margin-bottom: 1rem;
             padding-bottom: 0.5rem;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid var(--border-light);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-family: 'Playfair Display', serif;
         }
 
-        .history-info-box .close-btn {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            font-size: 1.5rem;
-            color: #94a3b8;
+        .close-btn {
             cursor: pointer;
+            font-size: 1.25rem;
+            color: var(--text-secondary);
             transition: color 0.2s;
-            z-index: 10;
         }
 
-        .history-info-box .close-btn:hover {
-            color: #64748b;
+        .close-btn:hover {
+            color: var(--accent-orange);
         }
 
-        #stop-response-btn:active {
-            transform: scale(0.95);
-            background-color: #dc2626 !important;
-        }
-
-        #stop-response-btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-
-        /* Image container - đã chỉnh sửa */
         .image-container {
             width: 100%;
             margin: 1rem 0;
             border-radius: 0.75rem;
             overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-light);
         }
 
         .image-container.expanded {
@@ -551,7 +444,7 @@
             margin: 0;
             border-radius: 0;
             padding: 1rem;
-            background-color: rgba(255, 255, 255, 0.95);
+            background-color: var(--card-bg);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -561,8 +454,8 @@
 
         .image-content {
             width: 100%;
-            height: 300px; /* Chiều cao cố định */
-            object-fit: cover; /* Cắt ảnh tỉ lệ */
+            height: 300px;
+            object-fit: cover;
             border-radius: 0;
             transition: all 0.3s ease;
             display: block;
@@ -581,58 +474,114 @@
             font-weight: 600;
             margin: 0;
             padding: 0.75rem 1rem;
-            color: #4f46e5;
+            color: var(--accent-orange);
             font-size: 1rem;
-            border-bottom: 1px solid #e2e8f0;
-            background-color: #f8fafc;
-            font-family: 'Arial', sans-serif;
+            border-bottom: 1px solid var(--border-light);
+            background-color: var(--card-bg);
+            font-family: 'Playfair Display', serif;
         }
 
-        .image-container.expanded .image-title {
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 0;
-            padding: 0.5rem 1rem;
-            font-size: 1rem;
+        /* Thiết kế mới cho form tìm kiếm */
+        .search-wrapper {
+            position: relative;
+            margin-bottom: 1rem;
         }
 
-        /* Scrollbar for mindmap */
-        .mindmap-container::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-
-        .mindmap-container::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-
-        .mindmap-container::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
-
-        .mindmap-container::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-
-        .search-input {
-            transition: all 0.2s;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        #search-input {
+            width: 100%;
+            padding: 1rem 5rem 1rem 1.2rem;
+            border-radius: 2rem;
+            border: 1px solid var(--border-light);
+            background-color: var(--input-bg);
+            color: var(--text-primary);
             font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            line-height: 1.5;
+            resize: none;
+            transition: all 0.2s;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+            min-height: 5rem;
+            max-height: 8rem;
         }
 
-        .search-input:focus {
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        #search-input:focus {
+            outline: none;
+            border-color: var(--accent-orange);
+            box-shadow: 0 0 0 3px rgba(244, 162, 97, 0.1), inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        #search-input::placeholder {
+            color: var(--text-secondary);
+            font-style: italic;
+            font-size: 0.95rem;
+        }
+
+.search-button {
+    position: absolute;
+    top: 50%;                    
+    bottom: auto;                 
+    left: 16rem;                  
+    right: auto;
+    transform: translateY(-50%);  
+    background-color: var(--button-cyan);
+    color: white;
+    border: none;
+    border-radius: 2rem;
+    padding: 0.6rem 1.2rem;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: none;  /* ← TẮT HOÀN TOÀN HIỆU ỨNG CHUYỂN ĐỘNG */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 2px 5px rgba(110, 198, 217, 0.3);
+}
+
+.search-button:hover {
+    background-color: #5db8cc;
+    transform: translateY(-50%);  /* Giữ nguyên, không dịch chuyển */
+    box-shadow: 0 2px 5px rgba(110, 198, 217, 0.3);
+}
+
+.search-button:active {
+    transform: translateY(-50%);  /* Giữ nguyên khi bấm */
+    background-color: var(--button-cyan);
+}
+        .search-button i {
+            font-size: 0.9rem;
         }
 
         .sidebar-header {
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid var(--border-light);
             padding-bottom: 1rem;
             margin-bottom: 1rem;
+            background-color: var(--card-bg);
+            border-radius: 1rem 1rem 0 0;
+        }
+
+        .content-container {
+            flex: 1;
+            padding: 1rem;
+            background-color: var(--bg-total);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            border-radius: 1rem 1rem 0 0;
+        }
+
+        #result-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 1rem;
         }
 
         .message-content {
             animation: fadeIn 0.3s ease-in-out;
+            color: var(--text-primary);
         }
 
         @keyframes fadeIn {
@@ -640,243 +589,58 @@
                 opacity: 0;
                 transform: translateY(5px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
-        /* Country highlight styles */
         .leaflet-tooltip {
             background: transparent !important;
             border: none !important;
             box-shadow: none !important;
-            color: #000;
+            color: var(--accent-orange);
             font-weight: bold;
-            text-shadow:
-                -1px -1px 0 white,
-                1px -1px 0 white,
-                -1px 1px 0 white,
-                1px 1px 0 white;
+            text-shadow: -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white;
             padding: 0 !important;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Playfair Display', serif;
         }
 
         .country-highlight {
             animation: highlight 2s ease-in-out;
+            filter: drop-shadow(0 0 10px rgba(244, 162, 97, 0.5));
         }
 
         @keyframes highlight {
             0% {
-                fill-opacity: 0.3;
+                filter: drop-shadow(0 0 5px rgba(244, 162, 97, 0.3));
             }
-
             50% {
-                fill-opacity: 0.8;
+                filter: drop-shadow(0 0 20px rgba(244, 162, 97, 0.8));
             }
-
             100% {
-                fill-opacity: 0.3;
+                filter: drop-shadow(0 0 5px rgba(244, 162, 97, 0.3));
             }
         }
 
-        .history-info-box:hover {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-
-        .close-btn {
-            float: right;
-            cursor: pointer;
-            font-size: 1.25rem;
-            color: #94a3b8;
-            transition: color 0.2s;
-            margin-left: 1rem;
-        }
-
-        .close-btn {
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-
-        .inline-block:hover .close-btn,
-        .mindmap-title:hover .close-btn {
-            opacity: 1;
-        }
-
-        .chat-input-container {
-            position: sticky;
-            bottom: 0;
-            background-color: #ffffff;
-            padding: 1rem;
-            border-top: 1px solid #e2e8f0;
-            z-index: 10;
-        }
-
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1rem;
-            max-height: calc(100vh - 200px);
-            margin-bottom: 0;
-        }
-
-        .chat-container {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            position: relative;
-        }
-
-        /* Floating action buttons */
-        .fab {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background-color: #4f46e5;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
-            cursor: pointer;
-            z-index: 1000;
-            transition: all 0.3s ease;
-        }
-
-        .fab:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
-            background-color: #4338ca;
-        }
-
-        .fab-sidebar {
-            position: fixed;
-            bottom: 8rem;
-            right: 2rem;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background-color: #10b981;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-            cursor: pointer;
-            z-index: 1000;
-            transition: all 0.3s ease;
-        }
-
-        .fab-sidebar:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
-            background-color: #059669;
-        }
-
-        /* Gradient background */
-        .gradient-bg {
-            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-        }
-
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-
-        /* Animated border */
-        .animated-border {
-            position: relative;
-        }
-
-        .animated-border::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, #4f46e5, #10b981);
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.3s ease;
-        }
-
-        .animated-border:hover::after {
-            transform: scaleX(1);
-        }
-
-        /* Pulse animation */
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.05);
-            }
-
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-
-        /* Battle marker styles */
-        .battle-marker {
-            background-color: #ef4444;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 12px;
-            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3);
-            animation: pulse 1.5s infinite;
-        }
-
-        /* Audio controls - đã chỉnh sửa */
         .audio-controls {
             display: flex;
             flex-direction: column;
             margin-top: 1rem;
             padding: 1rem;
-            background-color: #ffffff;
+            background-color: var(--card-bg);
             border-radius: 0.75rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-light);
             width: 100%;
         }
 
         .audio-controls-title {
             font-weight: 600;
             margin-bottom: 0.75rem;
-            color: #4f46e5;
+            color: var(--accent-orange);
             font-size: 1rem;
+            font-family: 'Playfair Display', serif;
         }
 
         .audio-controls-buttons {
@@ -887,7 +651,7 @@
         }
 
         .audio-controls button {
-            background-color: #4f46e5;
+            background-color: var(--button-cyan);
             color: white;
             border: none;
             border-radius: 50%;
@@ -900,23 +664,25 @@
             transition: all 0.2s;
         }
 
-        .audio-controls button:hover {
-            background-color: #4338ca;
+        .audio-controls button:hover:not(:disabled) {
+            background-color: #5db8cc;
+            transform: scale(1.1);
         }
 
         .audio-controls button:disabled {
-            background-color: #cbd5e1;
+            background-color: var(--text-secondary);
             cursor: not-allowed;
         }
 
         .audio-progress {
             flex-grow: 1;
             height: 6px;
-            background-color: #e2e8f0;
+            background-color: var(--border-light);
             border-radius: 3px;
             position: relative;
             overflow: hidden;
             margin-left: 0.5rem;
+            border: 1px solid var(--border-light);
         }
 
         .audio-progress-bar {
@@ -924,56 +690,59 @@
             top: 0;
             left: 0;
             height: 100%;
-            background-color: #4f46e5;
+            background-color: var(--accent-orange);
             width: 0%;
             transition: width 0.1s linear;
         }
 
-        /* Key locations styles */
-        .key-location {
-            background-color: #3b82f6;
+        .battle-marker {
+            background-color: var(--accent-orange);
             border-radius: 50%;
-            width: 16px;
-            height: 16px;
+            width: 30px;
+            height: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: bold;
-            font-size: 10px;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+            font-size: 14px;
+            box-shadow: 0 0 0 3px rgba(244, 162, 97, 0.3);
+            animation: pulse 1.5s infinite;
         }
 
-        .key-location::after {
-            content: '';
-            position: absolute;
+        .key-location-marker {
+            background-color: var(--button-cyan);
+            border-radius: 50%;
             width: 24px;
             height: 24px;
-            border-radius: 50%;
-            background-color: rgba(59, 130, 246, 0.2);
-            animation: ripple 2s infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            box-shadow: 0 0 0 2px rgba(110, 198, 217, 0.3);
         }
 
-        @keyframes ripple {
+        @keyframes pulse {
             0% {
-                transform: scale(0.8);
-                opacity: 1;
+                transform: scale(1);
             }
-
+            50% {
+                transform: scale(1.1);
+            }
             100% {
-                transform: scale(2);
-                opacity: 0;
+                transform: scale(1);
             }
         }
 
-        /* Sidebar toggle */
         .sidebar-toggle {
             position: absolute;
             top: 1rem;
             right: -1.5rem;
             width: 3rem;
             height: 3rem;
-            background-color: #4f46e5;
+            background-color: var(--accent-orange);
             color: white;
             border-radius: 50%;
             display: flex;
@@ -983,10 +752,11 @@
             z-index: 100;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
+            border: 1px solid var(--border-light);
         }
 
         .sidebar-toggle:hover {
-            background-color: #4338ca;
+            background-color: #e08e4d;
             transform: scale(1.1);
         }
 
@@ -994,29 +764,26 @@
             transform: translateX(-100%);
             position: absolute;
             left: -100%;
-            background-color: transparent;
-            box-shadow: none;
-            border-right: none;
         }
 
         .sidebar-collapsed .sidebar-toggle {
             right: -3rem;
         }
 
-        /* App container */
         #app {
             display: flex;
             flex: 1;
             overflow: hidden;
             position: relative;
             height: 100vh;
+            background-color: var(--bg-total);
         }
 
         #sidebar {
             width: 384px;
             height: 100%;
-            background-color: #ffffff;
-            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+            background-color: var(--card-bg);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
             position: absolute;
             left: 0;
             top: 0;
@@ -1024,6 +791,7 @@
             transition: transform 0.3s ease;
             display: flex;
             flex-direction: column;
+            border-right: 1px solid var(--border-light);
         }
 
         #map-container {
@@ -1034,199 +802,31 @@
             z-index: 10;
         }
 
-        .ai-result-content {
-            padding: 10px;
-            background-color: #f9f9f9;
-            border-radius: 4px;
+        #map {
+            border-radius: 0;
         }
 
-        .info-section {
-            margin: 10px 0;
+        .typing-indicator {
+            background-color: var(--card-bg);
+            border-radius: 1rem;
+            padding: 1rem;
+            border: 1px solid var(--border-light);
         }
 
-        .info-section span {
-            font-weight: bold;
-        }
-
-        /* Language toggle switch - đã chỉnh sửa */
-        .language-switch {
-            display: flex;
-            align-items: center;
-            margin-left: auto;
-            gap: 0.5rem;
-        }
-
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 30px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #4f46e5;
-            transition: .4s;
-            border-radius: 34px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 8px;
-            font-size: 12px;
-            font-weight: 600;
+        .stop-button {
+            background-color: #ff6b6b;
             color: white;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 22px;
-            width: 22px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-            z-index: 2;
-        }
-
-        .slider .vi-text {
-            opacity: 1;
-            transition: opacity 0.3s;
-        }
-
-        .slider .en-text {
-            opacity: 0.5;
-            transition: opacity 0.3s;
-        }
-
-        input:checked + .slider {
-            background-color: #10b981;
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(30px);
-        }
-
-        input:checked + .slider .vi-text {
-            opacity: 0.5;
-        }
-
-        input:checked + .slider .en-text {
-            opacity: 1;
-        }
-
-        .language-label {
-            display: none; /* Ẩn label bên ngoài */
-        }
-
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
-
-        .header-title {
-            display: flex;
-            align-items: center;
-            flex: 1;
-        }
-
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        /* Content container */
-        .content-container {
-            flex: 1;
-            padding: 1rem;
-            background-color: #f8fafc;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Timeline styles */
-        .timeline-container {
-            margin-top: 1rem;
-            padding: 1rem;
-            background-color: #ffffff;
-            border-radius: 0.75rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e2e8f0;
-            width: 100%;
-        }
-
-        .timeline-item {
-            position: relative;
-            padding-left: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        .timeline-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: 0.5rem;
-            top: 0.25rem;
-            width: 1rem;
-            height: 1rem;
-            border-radius: 50%;
-            background-color: #4f46e5;
-            border: 2px solid #ffffff;
-            z-index: 1;
-        }
-
-        .timeline-item::after {
-            content: '';
-            position: absolute;
-            left: 1rem;
-            top: 1.25rem;
-            bottom: -1rem;
-            width: 2px;
-            background-color: #e2e8f0;
-        }
-
-        .timeline-item:last-child::after {
-            display: none;
-        }
-
-        .timeline-content {
-            background-color: #f8fafc;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            border-left: 3px solid #4f46e5;
-        }
-
-        .timeline-time {
+            border: none;
+            border-radius: 2rem;
+            padding: 0.75rem 1.5rem;
             font-weight: 600;
-            color: #4f46e5;
-            margin-bottom: 0.25rem;
-            font-family: 'Arial', sans-serif;
+            transition: all 0.2s;
         }
 
-        .timeline-text {
-            color: #475569;
+        .stop-button:hover {
+            background-color: #ff5252;
         }
 
-        /* Loading screen - đã thêm */
         .loading-screen {
             position: fixed;
             top: 0;
@@ -1249,13 +849,6 @@
             visibility: visible;
         }
 
-        .loader-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
         .spinner-box {
             width: 200px;
             height: 200px;
@@ -1276,7 +869,7 @@
             height: 100px;
             padding: 3px;
             border-radius: 50%;
-            background: linear-gradient(0deg, rgba(63,249,220,0.1) 33%, rgba(63,249,220,1) 100%);
+            background: linear-gradient(0deg, rgba(244,162,97,0.1) 33%, #F4A261 100%);
             animation: spin3D 1.8s linear infinite;
         }
 
@@ -1293,7 +886,7 @@
             height: 100px;
             padding: 3px;
             border-radius: 50%;
-            background: linear-gradient(0deg, rgba(251,91,83,0.1) 33%, rgba(251,91,83,1) 100%);
+            background: linear-gradient(0deg, rgba(110,198,217,0.1) 33%, #6EC6D9 100%);
             animation: spin3D 2.2s linear infinite reverse;
         }
 
@@ -1308,9 +901,10 @@
             margin-top: 30px;
             font-size: 20px;
             font-weight: 600;
-            color: #333;
+            color: var(--accent-orange);
             text-align: center;
             animation: blink 1.5s ease-in-out infinite;
+            font-family: 'Playfair Display', serif;
         }
 
         @keyframes blink {
@@ -1321,44 +915,194 @@
         .loader-info {
             margin-top: 15px;
             font-size: 14px;
-            color: #666;
+            color: var(--text-secondary);
             text-align: center;
             max-width: 300px;
             line-height: 1.5;
         }
 
-        /* Result messages container */
-        #result-messages {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            flex: 1;
-            overflow-y: auto;
-            padding-bottom: 1rem;
-        }
-
-        /* Country history styles */
-        #country-history {
-            font-size: 0.95rem;
-            line-height: 1.6;
-            color: #475569;
-        }
-
-        /* Map click handler */
-        .map-click-handler {
+        .map-title-decoration {
             position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 20;
+            background-color: var(--card-bg);
+            color: var(--accent-orange);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            font-size: 14px;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            pointer-events: none;
+            backdrop-filter: blur(5px);
+        }
+
+        .map-title-decoration i {
+            margin-right: 8px;
+            color: var(--accent-orange);
+        }
+
+        .leaflet-control-zoom {
+            border: 1px solid var(--border-light) !important;
+            background-color: var(--card-bg) !important;
+            border-radius: 8px !important;
+            overflow: hidden;
+        }
+
+        .leaflet-control-zoom a {
+            background-color: var(--card-bg) !important;
+            color: var(--text-primary) !important;
+            border: none !important;
+        }
+
+        .leaflet-control-zoom a:hover {
+            background-color: var(--input-bg) !important;
+            color: var(--accent-orange) !important;
+        }
+
+        .timeline-container {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: var(--card-bg);
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-light);
+            width: 100%;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0.5rem;
+            top: 0.25rem;
+            width: 1rem;
+            height: 1rem;
+            border-radius: 50%;
+            background-color: var(--accent-orange);
+            border: 2px solid var(--card-bg);
+            z-index: 1;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 1rem;
+            top: 1.25rem;
+            bottom: -1rem;
+            width: 2px;
+            background-color: var(--border-light);
+        }
+
+        .timeline-item:last-child::after {
+            display: none;
+        }
+
+        .timeline-content {
+            background-color: var(--input-bg);
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border-left: 3px solid var(--accent-orange);
+        }
+
+        .timeline-time {
+            font-weight: 600;
+            color: var(--accent-orange);
+            margin-bottom: 0.25rem;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .timeline-text {
+            color: var(--text-primary);
+        }
+
+.language-switch {
+    display: flex;
+    align-items: center;
+    position: relative;
+    right: 15px;              /* ← Giá trị âm để kéo sang trái */
+    /* right: -10px sẽ kéo sang phải, right: 10px sẽ kéo sang trái */
+}
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
             top: 0;
             left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--input-bg);
+            transition: .4s;
+            border-radius: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+            border: 1px solid var(--border-light);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 3px;
+            background-color: var(--accent-orange);
+            transition: .4s;
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             width: 100%;
-            height: 100%;
-            z-index: 5;
-            cursor: pointer;
+        }
+
+        .header-title h2 {
+            color: var(--accent-orange);
+            font-family: 'Playfair Display', serif;
+        }
+
+        .header-title i {
+            color: var(--accent-orange);
         }
     </style>
 </head>
 
-<body class="h-screen flex flex-col gradient-bg text-light-text transition-all">
-    <!-- Loading Screen -->
+<body class="h-screen flex flex-col transition-all bg-total">
     <div id="loading-screen" class="loading-screen">
         <div class="loader-container">
             <div class="spinner-box">
@@ -1377,43 +1121,37 @@
     </div>
 
     <div id="app">
-        <div id="sidebar" class="flex flex-col h-full transition-all duration-300 relative">
+        <div id="sidebar" class="flex flex-col h-full transition-all duration-300 relative bg-card">
             <div class="sidebar-toggle" onclick="toggleSidebar()">
                 <i class="fas fa-chevron-left"></i>
             </div>
 
-            <div class="p-6 sidebar-header">
+            <div class="p-4 sidebar-header">
                 <div class="header-container">
                     <div class="header-title">
-                        <h2 class="text-2xl font-bold text-gray-800 font-display flex items-center">
-                            <i class="fas fa-map-marked-alt mr-3 text-primary"></i>
-                            <span class="animated-border">Bản Đồ Lịch Sử</span>
+                        <h2 class="text-xl font-bold font-display flex items-center">
+                            <i class="fas fa-crown mr-3 text-accent"></i>
+                            <span class="text-accent">Bản Đồ Lịch Sử</span>
                         </h2>
                     </div>
-                    <div class="header-actions">
-                        <div class="language-switch">
-                            <label class="switch">
-                                <input type="checkbox" id="language-toggle">
-                                <span class="slider">
-                                    <span class="vi-text">Vi</span>
-                                    <span class="en-text">En</span>
-                                </span>
-                            </label>
-                        </div>
+                    <div class="language-switch">
+                        <label class="switch">
+                            <input type="checkbox" id="language-toggle">
+                            <span class="slider">
+                                <span class="vi-text">Vi</span>
+                                <span class="en-text">En</span>
+                            </span>
+                        </label>
                     </div>
                 </div>
 
-                <form id="search-form" class="relative mt-6">
-                    <div class="relative">
-                        <input id="search-input" type="text"
-                            class="w-full p-4 rounded-xl border border-gray-300 bg-white search-input focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-gray-800 pl-12"
-                            placeholder="Nhập sự kiện lịch sử, nhân vật hoặc địa danh..." />
-                        <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-                            <i class="fas fa-search"></i>
-                        </div>
-                        <button type="submit"
-                            class="absolute right-3 top-1/2 transform -translate-y-1/2 bg-primary text-white p-2 rounded-lg hover:bg-secondary transition-colors">
-                            <i class="fas fa-paper-plane"></i>
+                <form id="search-form" class="mt-4">
+                    <div class="search-wrapper">
+                        <textarea id="search-input" rows="1"
+                            class="w-full"
+                            placeholder="Nhập sự kiện lịch sử, nhân vật hoặc địa danh..."></textarea>
+                        <button type="submit" class="search-button">
+                            <i class="fas fa-paper-plane"></i> GỬI
                         </button>
                     </div>
                 </form>
@@ -1422,13 +1160,13 @@
             <div class="content-container">
                 <div id="result-messages" class="flex flex-col gap-4 w-full"></div>
                 <div id="typing-indicator"
-                    class="hidden mt-4 p-4 bg-blue-50 rounded-xl text-blue-700 text-sm flex items-center">
-                    <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500 mr-3"></div>
+                    class="hidden mt-4 p-4 bg-card rounded-xl text-secondary text-sm flex items-center border border-custom typing-indicator">
+                    <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-accent mr-3"></div>
                     <span>AI đang tìm kiếm, vui lòng đợi...</span>
                 </div>
                 <div id="stop-button-container" class="hidden mt-4">
                     <button id="stop-response-btn"
-                        class="bg-red-500 hover:bg-red-600 text-white px-5 py-3 rounded-xl text-sm font-medium transition-colors flex items-center justify-center w-full">
+                        class="stop-button w-full">
                         <i class="fas fa-stop mr-2"></i> Dừng tìm kiếm
                     </button>
                 </div>
@@ -1436,6 +1174,9 @@
         </div>
 
         <div id="map-container" class="flex-1 flex flex-col h-full overflow-hidden relative">
+            <div class="map-title-decoration">
+                <i class="fas fa-globe-asia"></i> BẢN ĐỒ LỊCH SỬ
+            </div>
             <div id="map" class="flex-1"></div>
             <div class="map-click-handler" onclick="closeHistoryInfo()"></div>
         </div>
@@ -1451,9 +1192,9 @@
     <script type="module">
         import { GoogleGenerativeAI } from "@google/generative-ai";
 
-        const API_KEY = "k0GCvIc37Ld9yvYIkk_gKc5xkRN5T1WlDySazIA".split("").reverse().join("");
+        const API_KEY = "AIzaSyCoAtWhBdBR2y0-wBQl8fyUGSDIyP9NlDY";
         const genAI = new GoogleGenerativeAI(API_KEY);
-        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
         const searchForm = document.getElementById('search-form');
         const searchInput = document.getElementById('search-input');
@@ -1473,6 +1214,7 @@
         let currentQueries = [];
         let countryLayer = null;
         let selectedCountryLayer = null;
+        let selectedCountryName = null;
         let countryLayers = {};
         let speechSynthesisUtterance = null;
         let isSpeaking = false;
@@ -1480,7 +1222,6 @@
         let currentSpeechText = '';
         let keyLocations = [];
 
-        // Translation dictionary
         const translations = {
             vi: {
                 title: "Bản Đồ Lịch Sử",
@@ -1505,7 +1246,7 @@
                 battle_significance: "Tác động Lịch Sử",
                 event: "Sự kiện",
                 battle_heroes: "Anh Hùng Tiêu Biểu",
-                mindmap_title: "Sơ Đồ Tư Duy",
+                mindmap_title: "Sơ Đồ Tư Duy Trận Chiến",
                 non_history_error: "Xin lỗi, tôi chỉ trả lời các câu hỏi liên quan đến lịch sử. Vui lòng nhập một truy vấn về lịch sử!",
                 map_error: "Lỗi tải dữ liệu bản đồ, vui lòng thử lại sau.",
                 processing_error: "Lỗi khi xử lý yêu cầu. Vui lòng thử lại!",
@@ -1565,7 +1306,7 @@
                 battle_significance: "Historical Significance",
                 battle_heroes: "Notable Heroes",
                 event: "Event",
-                mindmap_title: "Mind Map",
+                mindmap_title: "Battle Mind Map",
                 figure_mindmap_title: "Character Mind Map",
                 battle_achievements: "Notable Achievements",
                 non_history_error: "Sorry, I only answer questions related to history. Please enter a history-related query!",
@@ -1600,87 +1341,6 @@
             }
         };
 
-        // Current language
-        let currentLanguage = 'vi';
-
-        // Function to update text based on language
-        function updateLanguage(lang) {
-            currentLanguage = lang;
-            document.documentElement.lang = lang;
-            
-            // Update search input placeholder
-            searchInput.placeholder = translations[lang].search_placeholder;
-            
-            // Update title
-            document.querySelector('.header-title span').textContent = translations[lang].title;
-            
-            // Update language toggle state
-            languageToggle.checked = lang === 'en';
-            
-            // Update loading text
-            const loadingText = document.getElementById('loadingText');
-            loadingText.textContent = translations[lang].loading_text_1;
-        }
-
-        // Function to toggle language
-        function toggleLanguage() {
-            const newLang = languageToggle.checked ? 'en' : 'vi';
-            updateLanguage(newLang);
-        }
-
-        // Function to show loading screen
-        function showLoadingScreen() {
-            loadingScreen.classList.add('active');
-            
-            // Update loading text animation
-            const loadingText = document.getElementById('loadingText');
-            const textVariations = [
-                translations[currentLanguage].loading_text_1,
-                translations[currentLanguage].loading_text_2,
-                translations[currentLanguage].loading_text_3,
-                translations[currentLanguage].loading_text_4
-            ];
-            
-            let textIndex = 0;
-            const textInterval = setInterval(() => {
-                textIndex = (textIndex + 1) % textVariations.length;
-                loadingText.textContent = textVariations[textIndex];
-                
-                // Hiệu ứng chuyển đổi text
-                loadingText.style.opacity = '0.5';
-                setTimeout(() => {
-                    loadingText.style.opacity = '1';
-                }, 200);
-            }, 3000);
-            
-            // Lưu interval để clear khi tắt loading
-            loadingScreen.textInterval = textInterval;
-        }
-
-        // Function to hide loading screen
-        function hideLoadingScreen() {
-            loadingScreen.classList.remove('active');
-            if (loadingScreen.textInterval) {
-                clearInterval(loadingScreen.textInterval);
-            }
-        }
-
-        // Function to toggle sidebar
-        function toggleSidebar() {
-            sidebar.classList.toggle('sidebar-collapsed');
-            const toggleIcon = document.querySelector('.sidebar-toggle i');
-            if (sidebar.classList.contains('sidebar-collapsed')) {
-                toggleIcon.classList.remove('fa-chevron-left');
-                toggleIcon.classList.add('fa-chevron-right');
-                mapContainer.style.marginLeft = '0';
-            } else {
-                toggleIcon.classList.remove('fa-chevron-right');
-                toggleIcon.classList.add('fa-chevron-left');
-                mapContainer.style.marginLeft = '0';
-            }
-        }
-
-        // Extended country name mapping
         const countryNameMap = {
             "Nguyễn Khuyến": "Vietnam",
             "Việt Nam": "Vietnam",
@@ -1723,7 +1383,6 @@
             "Nguyễn Huệ": "Nguyen Hue"
         };
 
-        // Extended history data with translations
         const historyData = {
             "Australia": {
                 history: {
@@ -1739,9 +1398,6 @@
             }
         };
 
-        // Battle keywords
-        const battleKeywords = ["trận chiến", "battle", "war", "engagement", "conflict", "campaign", "chiến tranh", "trận", "cuộc chiến", "chiến dịch", "đánh"];
-
         const countryCoordinates = {
             "Việt Nam": { lat: 16.0471, lng: 108.2062, zoom: 6 },
             "Trung Quốc": { lat: 35.8617, lng: 104.1954, zoom: 4 },
@@ -1753,7 +1409,8 @@
             "Nga": { lat: 61.5240, lng: 105.3188, zoom: 3 }
         };
 
-        // Historical locations in Vietnam with coordinates
+        const battleKeywords = ["trận chiến", "battle", "war", "engagement", "conflict", "campaign", "chiến tranh", "trận", "cuộc chiến", "chiến dịch", "đánh"];
+
         const vietnamHistoricalLocations = {
             "Điện Biên Phủ": {
                 lat: 21.3867,
@@ -1796,6 +1453,65 @@
                 description_en: "Site of historic naval battles against invaders"
             }
         };
+
+        let currentLanguage = 'vi';
+
+        function updateLanguage(lang) {
+            currentLanguage = lang;
+            document.documentElement.lang = lang;
+            searchInput.placeholder = translations[lang].search_placeholder;
+            document.querySelector('.header-title span').textContent = translations[lang].title;
+            languageToggle.checked = lang === 'en';
+            const loadingText = document.getElementById('loadingText');
+            loadingText.textContent = translations[lang].loading_text_1;
+        }
+
+        function toggleLanguage() {
+            const newLang = languageToggle.checked ? 'en' : 'vi';
+            updateLanguage(newLang);
+        }
+
+        function showLoadingScreen() {
+            loadingScreen.classList.add('active');
+            const loadingText = document.getElementById('loadingText');
+            const textVariations = [
+                translations[currentLanguage].loading_text_1,
+                translations[currentLanguage].loading_text_2,
+                translations[currentLanguage].loading_text_3,
+                translations[currentLanguage].loading_text_4
+            ];
+            let textIndex = 0;
+            const textInterval = setInterval(() => {
+                textIndex = (textIndex + 1) % textVariations.length;
+                loadingText.textContent = textVariations[textIndex];
+                loadingText.style.opacity = '0.5';
+                setTimeout(() => {
+                    loadingText.style.opacity = '1';
+                }, 200);
+            }, 3000);
+            loadingScreen.textInterval = textInterval;
+        }
+
+        function hideLoadingScreen() {
+            loadingScreen.classList.remove('active');
+            if (loadingScreen.textInterval) {
+                clearInterval(loadingScreen.textInterval);
+            }
+        }
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('sidebar-collapsed');
+            const toggleIcon = document.querySelector('.sidebar-toggle i');
+            if (sidebar.classList.contains('sidebar-collapsed')) {
+                toggleIcon.classList.remove('fa-chevron-left');
+                toggleIcon.classList.add('fa-chevron-right');
+                mapContainer.style.marginLeft = '0';
+            } else {
+                toggleIcon.classList.remove('fa-chevron-right');
+                toggleIcon.classList.add('fa-chevron-left');
+                mapContainer.style.marginLeft = '0';
+            }
+        }
 
         function isBattleQuery(query) {
             const lowerQuery = query.toLowerCase();
@@ -1844,7 +1560,16 @@
             setupEventListeners();
             mermaid.initialize({
                 startOnLoad: false,
-                theme: 'neutral',
+                theme: 'base',
+                themeVariables: {
+                    'background': '#F8F9F6',
+                    'primaryColor': '#F8F9F6',
+                    'primaryTextColor': '#333333',
+                    'primaryBorderColor': '#F4A261',
+                    'lineColor': '#F4A261',
+                    'secondaryColor': '#F4F7F8',
+                    'tertiaryColor': '#E3E6E8'
+                },
                 flowchart: {
                     useMaxWidth: false,
                     htmlLabels: true,
@@ -1853,39 +1578,21 @@
                     rankSpacing: 100
                 },
                 mindmap: {
-                    spacingFactor: 1.5,
-                    nodeAlignment: 'center',
+                    useMaxWidth: false,
                     padding: 10
-                },
-                themeVariables: {
-                    primaryColor: '#f8fafc',
-                    primaryBorderColor: '#cbd5e1',
-                    primaryTextColor: '#1e293b',
-                    lineColor: '#94a3b8',
-                    fontSize: '14px',
-                    nodeBorder: '2px',
-                    nodeBorderRadius: '12px',
-                    clusterBorder: '2px',
-                    clusterBorderRadius: '12px'
                 }
             });
             updateLanguage('vi');
             languageToggle.addEventListener('change', toggleLanguage);
-            
-            // Check for URL parameters
             checkUrlParameters();
         }
 
         function checkUrlParameters() {
             const urlParams = new URLSearchParams(window.location.search);
             const searchQuery = urlParams.get('search');
-            
             if (searchQuery) {
-                // Decode and set the search query
                 const decodedQuery = decodeURIComponent(searchQuery);
                 searchInput.value = decodedQuery;
-                
-                // Trigger search after a short delay to ensure everything is loaded
                 setTimeout(() => {
                     handleSubmit(null);
                 }, 500);
@@ -1894,8 +1601,10 @@
 
         function initMap() {
             map = L.map('map').setView([16.0471, 108.2062], 3);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, © CartoDB',
+                subdomains: 'abcd',
+                maxZoom: 19
             }).addTo(map);
 
             fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
@@ -1904,7 +1613,7 @@
                     return response.json();
                 })
                 .then(data => {
-                    const countriesLayer = L.geoJSON(data, {
+                    L.geoJSON(data, {
                         style: {
                             fillColor: 'transparent',
                             fillOpacity: 0,
@@ -1917,7 +1626,7 @@
 
                             layer.on('click', (e) => {
                                 L.DomEvent.stopPropagation(e);
-                                highlightCountry(countryName);
+                                toggleCountry(countryName);
                             });
                         }
                     }).addTo(map);
@@ -1928,30 +1637,44 @@
                 });
         }
 
-        function highlightCountry(countryName) {
-            // Clear all previous results
-            clearPreviousData();
-            
-            if (selectedCountryLayer) {
-                selectedCountryLayer.setStyle({
+        function toggleCountry(countryName) {
+            if (selectedCountryLayer && selectedCountryName === countryName) {
+                closeHistoryInfo();
+                return;
+            } else {
+                if (selectedCountryLayer) {
+                    resetCountryStyle(selectedCountryLayer);
+                }
+                highlightCountry(countryName);
+            }
+        }
+
+        function resetCountryStyle(layer) {
+            if (layer) {
+                layer.setStyle({
                     color: 'transparent',
                     fillOpacity: 0
                 });
-                if (selectedCountryLayer.getElement) {
-                    selectedCountryLayer.getElement().classList.remove('country-highlight');
+                if (layer.getElement) {
+                    layer.getElement().classList.remove('country-highlight');
                 }
             }
+        }
 
+        function highlightCountry(countryName) {
+            clearPreviousData();
+            
             const countryLayer = countryLayers[countryName];
             if (countryLayer) {
                 selectedCountryLayer = countryLayer;
+                selectedCountryName = countryName;
 
                 countryLayer.setStyle({
-                    color: '#4f46e5',
-                    weight: 2,
-                    opacity: 0.8,
-                    fillOpacity: 0.3,
-                    fillColor: '#4f46e5'
+                    color: '#F4A261',
+                    weight: 3,
+                    opacity: 0.9,
+                    fillOpacity: 0.4,
+                    fillColor: '#F4A261'
                 });
 
                 if (countryLayer.getElement) {
@@ -1962,24 +1685,23 @@
             const translatedName = translateCountryName(countryName);
             const displayName = currentLanguage === 'en' ? translatedName : countryName;
             
-            // Create history info box
             const historyInfoBox = document.createElement('div');
             historyInfoBox.className = 'history-info-box';
             historyInfoBox.innerHTML = `
                 <div class="relative">
-                    <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                    <h2 class="text-xl font-bold flex items-center">
                         <span>
-                            <i class="fas fa-flag mr-2 text-primary"></i>
+                            <i class="fas fa-flag mr-2 text-accent"></i>
                             ${displayName}
                         </span>
                     </h2>
-                    <span class="absolute top-0 right-0 text-xl cursor-pointer text-gray-500 hover:text-gray-700" onclick="this.parentElement.parentElement.remove(); closeHistoryInfo();">
+                    <span class="close-btn absolute top-2 right-2" onclick="this.parentElement.parentElement.remove(); closeHistoryInfo();">
                         <i class="fas fa-times"></i>
                     </span>
                 </div>
-                <div class="mt-4 text-gray-700">
+                <div class="mt-4">
                     <p class="mb-4">${historyData[translatedName]?.history[currentLanguage] || translations[currentLanguage].no_summary}</p>
-                    <div class="flex items-center text-sm text-gray-500">
+                    <div class="flex items-center text-sm text-secondary">
                         <i class="fas fa-info-circle mr-2"></i>
                         <span>${translations[currentLanguage].country_info_close}</span>
                     </div>
@@ -2007,7 +1729,9 @@
                     selectedCountryLayer.getElement().classList.remove('country-highlight');
                 }
                 selectedCountryLayer = null;
+                selectedCountryName = null;
             }
+            resultMessages.innerHTML = '';
         }
 
         function translateCountryName(name) {
@@ -2023,6 +1747,22 @@
             }
 
             return name;
+        }
+
+        function extractCountryName(query) {
+            const lowerQuery = query.toLowerCase();
+            for (const country in countryCoordinates) {
+                if (lowerQuery.includes(country.toLowerCase())) {
+                    return country;
+                }
+            }
+            for (const [viName, enName] of Object.entries(countryNameMap)) {
+                if (lowerQuery.includes(viName.toLowerCase()) || 
+                    (enName && lowerQuery.includes(enName.toLowerCase()))) {
+                    return viName;
+                }
+            }
+            return null;
         }
 
         function setupEventListeners() {
@@ -2053,15 +1793,27 @@
         function clearPreviousData() {
             currentQueries = [];
             resultMessages.innerHTML = '';
-            markers.forEach(marker => map.removeLayer(marker));
+            
+            // Xóa tất cả markers chính
+            markers.forEach(marker => {
+                if (marker && marker.remove) {
+                    marker.remove();
+                }
+            });
             markers = [];
-            keyLocations.forEach(loc => map.removeLayer(loc));
+            
+            // Xóa tất cả key locations markers
+            keyLocations.forEach(loc => {
+                if (loc && loc.remove) {
+                    loc.remove();
+                }
+            });
             keyLocations = [];
+            
             if (countryLayer) {
                 map.removeLayer(countryLayer);
                 countryLayer = null;
             }
-            closeHistoryInfo();
             stopSpeech();
         }
 
@@ -2094,12 +1846,10 @@
                 let prompt = userQuery;
                 let responseType = "general";
 
-                // Determine query type
                 if (isCountryQuery(userQuery) && !isBattleQuery(userQuery) && !isFigureQuery(userQuery) && !isLandmarkQuery(userQuery)) {
-                    // Handle country query
                     const countryName = extractCountryName(userQuery);
                     if (countryName) {
-                        highlightCountry(countryName);
+                        toggleCountry(countryName);
                         isSending = false;
                         typingIndicator.classList.add("hidden");
                         stopButtonContainer.classList.add("hidden");
@@ -2109,13 +1859,13 @@
                 } else if (isFigureQuery(userQuery)) {
                     responseType = "figure";
                     prompt = `
-TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẤT KỲ VĂN BẢN NÀO KHÁC. Cung cấp thông tin về nhân vật lịch sử "${userQuery}" bằng ngôn ngữ ${currentLanguage === 'vi' ? 'tiếng Việt' : 'tiếng Anh'}. JSON phải có cấu trúc:
+TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thông tin về nhân vật lịch sử "${userQuery}" bằng ngôn ngữ ${currentLanguage === 'vi' ? 'tiếng Việt' : 'tiếng Anh'}. JSON phải có cấu trúc:
 {
     "name": "Tên nhân vật",
     "time": "Thời gian sống (năm sinh - năm mất)",
     "location": "Địa điểm cụ thể liên quan (ưu tiên nơi sinh)",
-    "lat": "Tọa độ vĩ độ của địa điểm (bắt buộc)",
-    "lng": "Tọa độ kinh độ của địa điểm (bắt buộc)",
+    "lat": 10.38,
+    "lng": 106.35,
     "summary": "Tóm tắt tiểu sử",
     "achievements": ["Danh sách thành tựu nổi bật"],
     "significance": "Ý nghĩa lịch sử",
@@ -2126,35 +1876,30 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẤT KỲ VĂN BẢN NÀO KHÁC. Cung 
                 } else if (isBattleQuery(userQuery)) {
                     responseType = "battle";
                     prompt = `
-TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẤT KỲ VĂN BẢN NÀO KHÁC. Cung cấp thông tin về trận chiến "${userQuery}" bằng ngôn ngữ ${currentLanguage === 'vi' ? 'tiếng Việt' : 'tiếng Anh'}. JSON phải có cấu trúc:
+TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thông tin về trận chiến "${userQuery}" bằng ngôn ngữ ${currentLanguage === 'vi' ? 'tiếng Việt' : 'tiếng Anh'}. JSON phải có cấu trúc:
 {
     "name": "Tên trận chiến",
     "time": "Thời gian diễn ra",
     "location": "Địa điểm cụ thể diễn ra",
-    "lat": "Tọa độ vĩ độ của địa điểm (bắt buộc)",
-    "lng": "Tọa độ kinh độ của địa điểm (bắt buộc)",
+    "lat": 10.38,
+    "lng": 106.35,
     "summary": "Tóm tắt trận chiến",
     "factions": ["Danh sách các phe tham gia"],
-    "troop_numbers": {"Phe": "Số quân"},
-    "commanders": {"Phe": "Tên chỉ huy"},
-    "tactics": {"Phe": "Chiến thuật sử dụng"},
-    "casualties": {"Phe": "Số thương vong"},
-    "heroes": [{"name": "Tên anh hùng", "role": "Vai trò", "description": "Mô tả đóng góp"}],
-    "timeline": ["Các mốc sự kiện chính"],
+    "commanders": {"Phe A": "Tên chỉ huy", "Phe B": "Tên chỉ huy"},
+    "timeline": ["Sự kiện 1", "Sự kiện 2", "Sự kiện 3"],
     "outcome": "Kết quả trận chiến",
-    "significance": "Ý nghĩa lịch sử",
-    "key_locations": [{"name": "Tên địa điểm quan trọng", "description": "Mô tả tầm quan trọng"}]
+    "significance": "Ý nghĩa lịch sử"
 }
                     `;
                 } else if (isLandmarkQuery(userQuery)) {
                     responseType = "landmark";
                     prompt = `
-TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung cấp thông tin về địa danh lịch sử "${userQuery}" bằng ngôn ngữ ${currentLanguage === 'vi' ? 'tiếng Việt' : 'tiếng Anh'}. JSON phải có cấu trúc:
+TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thông tin về địa danh lịch sử "${userQuery}" bằng ngôn ngữ ${currentLanguage === 'vi' ? 'tiếng Việt' : 'tiếng Anh'}. JSON phải có cấu trúc:
 {
     "name": "Tên địa danh",
     "location": "Địa điểm cụ thể (ví dụ: 'Huế, Thừa Thiên Huế')",
-    "lat": "Tọa độ vĩ độ của địa điểm (bắt buộc)",
-    "lng": "Tọa độ kinh độ của địa điểm (bắt buộc)",
+    "lat": 16.4697,
+    "lng": 107.5777,
     "build_time": "Thời gian xây dựng (ví dụ: '1804-1833' hoặc 'Thế kỷ 19')",
     "purpose": "Mục đích xây dựng địa danh",
     "architecture": "Phong cách kiến trúc hoặc đặc điểm kiến trúc",
@@ -2204,34 +1949,38 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
                             jsonStr = jsonStr.split('```json')[1].split('```')[0].trim();
                         } else if (jsonStr.includes('```')) {
                             jsonStr = jsonStr.split('```')[1].split('```')[0].trim();
+                        } else if (jsonStr.includes('JSON')) {
+                            const jsonMatch = jsonStr.match(/\{[\s\S]*\}/);
+                            if (jsonMatch) {
+                                jsonStr = jsonMatch[0];
+                            }
                         }
 
                         let landmarkData;
                         try {
                             landmarkData = JSON.parse(jsonStr);
                         } catch (e) {
+                            console.error("Lỗi parse JSON lần 1:", e);
                             jsonStr = jsonStr.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2":');
+                            jsonStr = jsonStr.replace(/'/g, '"');
+                            jsonStr = jsonStr.replace(/,\s*}/g, '}');
+                            jsonStr = jsonStr.replace(/,\s*]/g, ']');
                             landmarkData = JSON.parse(jsonStr);
                         }
 
-                        // Create result container
                         const resultContainer = createResultContainer(landmarkData.name || userQuery);
                         
-                        // Get image from Wikipedia
                         const imageUrl = await getWikipediaImage(landmarkData.name || userQuery);
                         landmarkData.imageUrl = imageUrl;
 
-                        // Add image if available
                         if (imageUrl) {
                             const imageContainer = createImageContainer(landmarkData.name || userQuery, imageUrl);
                             resultContainer.querySelector('.result-content').appendChild(imageContainer);
                         }
 
-                        // Add formatted data
                         const formattedData = formatLandmarkData(landmarkData);
                         resultContainer.querySelector('.result-content').innerHTML += formattedData;
 
-                        // Add to result messages
                         resultMessages.appendChild(resultContainer);
 
                         if (landmarkData.lat && landmarkData.lng) {
@@ -2248,13 +1997,11 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
                         }
 
                         if (!isStopped) {
-                            // Add mindmap
                             const mindmapDiv = createMindmapContainer(landmarkData.name || userQuery, translations[currentLanguage].landmark_mindmap_title);
                             resultContainer.querySelector('.result-content').appendChild(mindmapDiv);
 
-                            await generateMindmap(landmarkData, mindmapDiv, "landmark");
+                            await generateMindmap(landmarkData, mindmapDiv);
 
-                            // Add audio controls
                             const narrationText = generateNarrationText(landmarkData);
                             const audioControls = createAudioControls(narrationText, landmarkData.name || userQuery);
                             resultContainer.querySelector('.result-content').appendChild(audioControls);
@@ -2282,34 +2029,38 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
                             jsonStr = jsonStr.split('```json')[1].split('```')[0].trim();
                         } else if (jsonStr.includes('```')) {
                             jsonStr = jsonStr.split('```')[1].split('```')[0].trim();
+                        } else if (jsonStr.includes('JSON')) {
+                            const jsonMatch = jsonStr.match(/\{[\s\S]*\}/);
+                            if (jsonMatch) {
+                                jsonStr = jsonMatch[0];
+                            }
                         }
 
                         let figureData;
                         try {
                             figureData = JSON.parse(jsonStr);
                         } catch (e) {
+                            console.error("Lỗi parse JSON lần 1:", e);
                             jsonStr = jsonStr.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2":');
+                            jsonStr = jsonStr.replace(/'/g, '"');
+                            jsonStr = jsonStr.replace(/,\s*}/g, '}');
+                            jsonStr = jsonStr.replace(/,\s*]/g, ']');
                             figureData = JSON.parse(jsonStr);
                         }
 
-                        // Create result container
                         const resultContainer = createResultContainer(figureData.name || userQuery);
                         
-                        // Get image from Wikipedia
                         const imageUrl = await getWikipediaImage(figureData.name || userQuery);
                         figureData.imageUrl = imageUrl;
 
-                        // Add image if available
                         if (imageUrl) {
                             const imageContainer = createImageContainer(figureData.name || userQuery, imageUrl);
                             resultContainer.querySelector('.result-content').appendChild(imageContainer);
                         }
 
-                        // Add formatted data
                         const formattedData = formatFigureData(figureData);
                         resultContainer.querySelector('.result-content').innerHTML += formattedData;
 
-                        // Add to result messages
                         resultMessages.appendChild(resultContainer);
 
                         if (figureData.lat && figureData.lng) {
@@ -2326,13 +2077,11 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
                         }
 
                         if (!isStopped) {
-                            // Add mindmap
                             const mindmapDiv = createMindmapContainer(figureData.name || userQuery, translations[currentLanguage].figure_mindmap_title);
                             resultContainer.querySelector('.result-content').appendChild(mindmapDiv);
 
-                            await generateMindmap(figureData, mindmapDiv, "figure");
+                            await generateMindmap(figureData, mindmapDiv);
                             
-                            // Add audio controls
                             const narrationText = generateNarrationText(figureData);
                             const audioControls = createAudioControls(narrationText, figureData.name || userQuery);
                             resultContainer.querySelector('.result-content').appendChild(audioControls);
@@ -2360,6 +2109,11 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
                             jsonStr = jsonStr.split('```json')[1].split('```')[0].trim();
                         } else if (jsonStr.includes('```')) {
                             jsonStr = jsonStr.split('```')[1].split('```')[0].trim();
+                        } else if (jsonStr.includes('JSON')) {
+                            const jsonMatch = jsonStr.match(/\{[\s\S]*\}/);
+                            if (jsonMatch) {
+                                jsonStr = jsonMatch[0];
+                            }
                         }
 
                         let battleData;
@@ -2389,24 +2143,19 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
                             }
                         }
 
-                        // Create result container
                         const resultContainer = createResultContainer(battleData.name || userQuery);
                         
-                        // Get image from Wikipedia
                         const imageUrl = await getWikipediaImage(battleData.name || userQuery);
                         battleData.imageUrl = imageUrl;
 
-                        // Add image if available
                         if (imageUrl) {
                             const imageContainer = createImageContainer(battleData.name || userQuery, imageUrl);
                             resultContainer.querySelector('.result-content').appendChild(imageContainer);
                         }
 
-                        // Add formatted data
                         const formattedData = formatBattleData(battleData);
                         resultContainer.querySelector('.result-content').innerHTML += formattedData;
 
-                        // Add to result messages
                         resultMessages.appendChild(resultContainer);
 
                         if (battleData.lat && battleData.lng) {
@@ -2422,39 +2171,17 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
                             }
                         }
 
-                        if (battleData.factions && Array.isArray(battleData.factions)) {
-                            const countries = await extractCountriesFromFactions(battleData.factions);
-                            if (countries.length > 0) {
-                                // Don't highlight countries for battle queries
-                            }
-                        }
-
-                        if (battleData.key_locations && Array.isArray(battleData.key_locations) && battleData.key_locations.length > 0) {
-                            for (const loc of battleData.key_locations) {
-                                if (loc && loc.name) {
-                                    const keyLocation = await getLocationCoordinates(loc.name);
-                                    if (keyLocation && keyLocation.lat && keyLocation.lng) {
-                                        addKeyLocationMarker(keyLocation.lat, keyLocation.lng, keyLocation.name, keyLocation.description || loc.description, keyLocations.length + 1);
-                                    } else if (loc.lat && loc.lng) {
-                                        addKeyLocationMarker(loc.lat, loc.lng, loc.name, loc.description, keyLocations.length + 1);
-                                    }
-                                }
-                            }
-                        }
-
                         if (!isStopped) {
-                            // Add mindmap
                             const mindmapDiv = createMindmapContainer(battleData.name || userQuery, translations[currentLanguage].mindmap_title);
                             resultContainer.querySelector('.result-content').appendChild(mindmapDiv);
 
-                            await generateMindmap(battleData, mindmapDiv, "battle");
+                            await generateMindmap(battleData, mindmapDiv);
 
-                            // Add timeline if available
                             if (battleData.timeline && Array.isArray(battleData.timeline) && battleData.timeline.length > 0) {
                                 const timelineDiv = document.createElement('div');
                                 timelineDiv.className = 'timeline-container';
                                 timelineDiv.innerHTML = `
-                                    <h3 class="text-lg font-semibold mb-3 text-primary">
+                                    <h3 class="text-lg font-semibold mb-3 text-accent">
                                         <i class="fas fa-history mr-2"></i>
                                         ${translations[currentLanguage].timeline_title}
                                     </h3>
@@ -2470,7 +2197,6 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
                                 resultContainer.querySelector('.result-content').appendChild(timelineDiv);
                             }
 
-                            // Add audio controls
                             const narrationText = generateNarrationText(battleData);
                             const audioControls = createAudioControls(narrationText, battleData.name || userQuery);
                             resultContainer.querySelector('.result-content').appendChild(audioControls);
@@ -2519,24 +2245,6 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
             }
         }
 
-        function extractCountryName(query) {
-            const lowerQuery = query.toLowerCase();
-            for (const country in countryCoordinates) {
-                if (lowerQuery.includes(country.toLowerCase())) {
-                    return country;
-                }
-            }
-            
-            // Check Vietnamese names
-            for (const [viName, enName] of Object.entries(countryNameMap)) {
-                if (lowerQuery.includes(viName.toLowerCase())) {
-                    return viName;
-                }
-            }
-            
-            return null;
-        }
-
         function transliterateVietnamese(text) {
             const map = {
                 'à': 'a', 'á': 'a', 'ả': 'a', 'ã': 'a', 'ạ': 'a',
@@ -2559,7 +2267,6 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
                 const normalizedLocation = locationName.trim().toLowerCase();
                 const transliteratedLocation = transliterateVietnamese(normalizedLocation);
 
-                // Kiểm tra đặc biệt cho Điện Biên Phủ
                 if (normalizedLocation.includes('điện biên phủ') ||
                     normalizedLocation.includes('dien bien phu') ||
                     transliteratedLocation.includes('dien bien phu')) {
@@ -2572,7 +2279,6 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
                     };
                 }
 
-                // Kiểm tra xem địa điểm có trong danh sách lịch sử Việt Nam không
                 for (const [key, value] of Object.entries(vietnamHistoricalLocations)) {
                     const keyNormalized = key.toLowerCase();
                     const nameEnNormalized = value.name_en ? value.name_en.toLowerCase() : '';
@@ -2591,7 +2297,6 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
                     }
                 }
 
-                // Thử tìm kiếm với Nominatim
                 let query = encodeURIComponent(locationName);
                 let data;
                 try {
@@ -2620,25 +2325,6 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
                 console.error(`Lỗi khi lấy tọa độ cho "${locationName}":`, error);
                 return null;
             }
-        }
-
-        function addKeyLocationMarker(lat, lng, name, description, index) {
-            const marker = L.marker([lat, lng], {
-                icon: L.divIcon({
-                    className: 'key-location-marker',
-                    html: `<div class="key-location">${index}</div>`,
-                    iconSize: [24, 24],
-                    iconAnchor: [12, 12]
-                })
-            }).addTo(map);
-
-            let popupContent = `<div class="font-medium text-primary">${name}</div>`;
-            if (description) {
-                popupContent += `<div class="text-sm mt-1">${description}</div>`;
-            }
-
-            marker.bindPopup(popupContent);
-            keyLocations.push(marker);
         }
 
         function generateNarrationText(data) {
@@ -2716,13 +2402,13 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
                     ${translations[currentLanguage].audio_controls}
                 </div>
                 <div class="audio-controls-buttons">
-                    <button id="play-audio" class="bg-primary text-white p-2 rounded-full hover:bg-secondary">
+                    <button id="play-audio" class="bg-button text-white p-2 rounded-full hover:bg-button/80">
                         <i class="fas fa-play"></i>
                     </button>
-                    <button id="pause-audio" class="bg-gray-500 text-white p-2 rounded-full hover:bg-gray-600" disabled>
+                    <button id="pause-audio" class="bg-button text-white p-2 rounded-full hover:bg-button/80" disabled>
                         <i class="fas fa-pause"></i>
                     </button>
-                    <button id="stop-audio" class="bg-red-500 text-white p-2 rounded-full hover:bg-red-600">
+                    <button id="stop-audio" class="bg-button text-white p-2 rounded-full hover:bg-button/80">
                         <i class="fas fa-stop"></i>
                     </button>
                     <div class="audio-progress">
@@ -2731,7 +2417,6 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
                 </div>
             `;
 
-            // Add event listeners
             audioControls.querySelector('#play-audio').addEventListener('click', () => playSpeech(text, audioControls));
             audioControls.querySelector('#pause-audio').addEventListener('click', pauseSpeech);
             audioControls.querySelector('#stop-audio').addEventListener('click', stopSpeech);
@@ -2747,7 +2432,6 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
             speechSynthesisUtterance.lang = currentLanguage === 'vi' ? 'vi-VN' : 'en-US';
             speechSynthesisUtterance.rate = 0.9;
 
-            // Enable/disable buttons
             const playBtn = audioControls.querySelector('#play-audio');
             const pauseBtn = audioControls.querySelector('#pause-audio');
             const stopBtn = audioControls.querySelector('#stop-audio');
@@ -2785,7 +2469,6 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
                 speechSynthesis.pause();
                 isSpeaking = false;
                 
-                // Update all audio control buttons
                 document.querySelectorAll('#play-audio').forEach(btn => {
                     btn.disabled = false;
                 });
@@ -2806,12 +2489,10 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
                     speechSynthesis.cancel();
                     isSpeaking = false;
 
-                    // Reset all progress bars
                     document.querySelectorAll('.audio-progress-bar').forEach(bar => {
                         bar.style.width = '0%';
                     });
 
-                    // Enable play buttons, disable pause and stop buttons
                     document.querySelectorAll('#play-audio').forEach(btn => {
                         btn.disabled = false;
                     });
@@ -2836,7 +2517,7 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
             container.innerHTML = `
                 <div class="result-title">
                     <span>${title}</span>
-                    <span class="close-btn cursor-pointer text-gray-500 hover:text-gray-700" onclick="this.parentElement.parentElement.remove();">
+                    <span class="close-btn" onclick="this.parentElement.parentElement.remove();">
                         <i class="fas fa-times"></i>
                     </span>
                 </div>
@@ -2851,14 +2532,13 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
             container.innerHTML = `
                 <div class="image-title relative">
                     ${translations[currentLanguage].picture}: ${title}
-                    <span class="close-btn absolute top-2 right-2 cursor-pointer text-gray-500 hover:text-gray-700" onclick="this.parentElement.parentElement.remove()">
+                    <span class="close-btn absolute top-2 right-2 cursor-pointer hover:text-accent" onclick="this.parentElement.parentElement.remove()">
                         <i class="fas fa-times"></i>
                     </span>
                 </div>
                 <img src="${imageUrl}" alt="${title}" class="image-content" />
             `;
             
-            // Add click event to expand image
             container.querySelector('.image-content').addEventListener('click', function() {
                 container.classList.toggle('expanded');
             });
@@ -2872,7 +2552,7 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
             mindmapDiv.innerHTML = `
                 <div class="mindmap-title relative">
                     ${mindmapTitle}: ${title}
-                    <span class="close-btn absolute top-2 right-2 cursor-pointer text-gray-500 hover:text-gray-700" onclick="this.parentElement.parentElement.remove()">
+                    <span class="close-btn absolute top-2 right-2 cursor-pointer hover:text-accent" onclick="this.parentElement.parentElement.remove()">
                         <i class="fas fa-times"></i>
                     </span>
                 </div>
@@ -2888,48 +2568,87 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
             return mindmapDiv;
         }
 
-        async function generateMindmap(data, container, type) {
+        // ==================================================
+        // CODE SƠ ĐỒ TƯ DUY MỚI (ĐÃ SỬA LỖI)
+        // ==================================================
+        async function generateMindmap(data, container) {
             try {
+                const isBattle = data.factions !== undefined;
+                const isFigure = data.achievements !== undefined && !isBattle;
+                const isLandmark = data.purpose !== undefined && data.architecture !== undefined;
+                
                 let mindmapContent = "";
                 
-                if (type === "battle") {
-                    mindmapContent = generateMermaidMindmap(data);
-                } else if (type === "figure") {
-                    mindmapContent = generateFigureMermaidMindmap(data);
-                } else if (type === "landmark") {
-                    mindmapContent = generateLandmarkMermaidMindmap(data);
+                if (isBattle) {
+                    mindmapContent = generateBattleMindmap(data);
+                } else if (isFigure) {
+                    mindmapContent = generateFigureMindmap(data);
+                } else if (isLandmark) {
+                    mindmapContent = generateLandmarkMindmap(data);
                 }
 
-                const mindmapDiv = container.querySelector('.mindmap') || document.createElement('div');
+                // Xóa nội dung loading cũ
+                container.innerHTML = '';
+                
+                // Tạo title cho mindmap
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'mindmap-title relative';
+                titleDiv.innerHTML = `
+                    ${isLandmark ? translations[currentLanguage].landmark_mindmap_title : 
+                      isFigure ? translations[currentLanguage].figure_mindmap_title : 
+                      translations[currentLanguage].mindmap_title}: ${data.name || "Thông tin"}
+                    <span class="close-btn absolute top-2 right-2 cursor-pointer hover:text-accent" onclick="this.parentElement.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </span>
+                `;
+                container.appendChild(titleDiv);
+
+                // Tạo div chứa mindmap
+                const mindmapDiv = document.createElement('div');
                 mindmapDiv.className = 'mindmap';
                 mindmapDiv.textContent = mindmapContent;
-
-                // Replace loading content with mindmap
-                const loadingDiv = container.querySelector('.loading-mindmap');
-                if (loadingDiv) {
-                    loadingDiv.remove();
-                }
                 container.appendChild(mindmapDiv);
 
+                // Render mindmap
                 try {
                     await mermaid.run({
                         nodes: [mindmapDiv],
                     });
+                    
+                    // Thêm class cho các node để tạo màu sắc
+                    setTimeout(() => {
+                        addColorClassesToMindmap(mindmapDiv);
+                    }, 100);
+                    
                 } catch (mermaidError) {
                     console.error("Lỗi render Mermaid:", mermaidError);
                     container.innerHTML = `
-                        <div class="mindmap-error">${translations[currentLanguage].processing_error}: ${mermaidError.message}</div>
+                        <div class="mindmap-title relative">
+                            ${isLandmark ? translations[currentLanguage].landmark_mindmap_title : 
+                              isFigure ? translations[currentLanguage].figure_mindmap_title : 
+                              translations[currentLanguage].mindmap_title}: ${data.name || "Thông tin"}
+                            <span class="close-btn absolute top-2 right-2 cursor-pointer hover:text-accent" onclick="this.parentElement.parentElement.remove()">
+                                <i class="fas fa-times"></i>
+                            </span>
+                        </div>
+                        <div class="mindmap-error">${translations[currentLanguage].processing_error}</div>
                     `;
                 }
             } catch (error) {
                 console.error("Lỗi khi tạo sơ đồ tư duy:", error);
                 container.innerHTML = `
-                    <div class="mindmap-error">${translations[currentLanguage].processing_error}: ${error.message}</div>
+                    <div class="mindmap-title relative">
+                        Sơ Đồ Tư Duy
+                        <span class="close-btn absolute top-2 right-2 cursor-pointer hover:text-accent" onclick="this.parentElement.parentElement.remove()">
+                            <i class="fas fa-times"></i>
+                        </span>
+                    </div>
+                    <div class="mindmap-error">${translations[currentLanguage].processing_error}</div>
                 `;
             }
         }
 
-        function generateLandmarkMermaidMindmap(landmarkData) {
+        function generateBattleMindmap(battleData) {
             const safeText = (text) => {
                 if (!text) return "";
                 return text.toString()
@@ -2938,148 +2657,72 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
                     .replace(/\n/g, " ")
                     .replace(/\s+/g, " ")
                     .trim()
-                    .substring(0, 150);
+                    .substring(0, 100);
             };
 
             let mermaidCode = `mindmap\n`;
 
-            // Nút gốc với class root-node
-            mermaidCode += `  root(("${safeText(landmarkData.name) || translations[currentLanguage].unknown}"))\n`;
-            mermaidCode += `    class root root-node\n`;
+            // Root node
+            mermaidCode += `  root(("${safeText(battleData.name) || 'Trận chiến'}"))\n`;
+            mermaidCode += `    classDef root fill:#F8F9F6,stroke:#F4A261,stroke-width:3px,color:#333333\n`;
 
-            // Nút vị trí với class location-node
-            if (landmarkData.location) {
-                mermaidCode += `    ${translations[currentLanguage].battle_location}\n`;
-                mermaidCode += `      "${safeText(landmarkData.location)}"\n`;
-                mermaidCode += `      class ${translations[currentLanguage].battle_location.replace(/\s+/g, '_')} location-node\n`;
-            }
-
-            // Nút thời gian xây dựng với class time-node
-            if (landmarkData.build_time) {
-                mermaidCode += `    ${translations[currentLanguage].landmark_build_time}\n`;
-                mermaidCode += `      "${safeText(landmarkData.build_time)}"\n`;
-                mermaidCode += `      class ${translations[currentLanguage].landmark_build_time.replace(/\s+/g, '_')} time-node\n`;
-            }
-
-            // Nút mục đích với class purpose-node
-            if (landmarkData.purpose) {
-                mermaidCode += `    ${translations[currentLanguage].landmark_purpose}\n`;
-                mermaidCode += `      "${safeText(landmarkData.purpose)}"\n`;
-                mermaidCode += `      class ${translations[currentLanguage].landmark_purpose.replace(/\s+/g, '_')} purpose-node\n`;
-            }
-
-            // Nút kiến trúc với class architecture-node
-            if (landmarkData.architecture) {
-                mermaidCode += `    ${translations[currentLanguage].landmark_architecture}\n`;
-                mermaidCode += `      "${safeText(landmarkData.architecture)}"\n`;
-                mermaidCode += `      class ${translations[currentLanguage].landmark_architecture.replace(/\s+/g, '_')} architecture-node\n`;
-            }
-
-            // Nút nội dung với class content-node
-            if (landmarkData.contents && landmarkData.contents.length > 0) {
-                mermaidCode += `    ${translations[currentLanguage].landmark_contents}\n`;
-                landmarkData.contents.forEach(item => {
-                    const safeItem = safeText(item);
-                    mermaidCode += `      "${safeItem}"\n`;
-                });
-                mermaidCode += `    class ${translations[currentLanguage].landmark_contents.replace(/\s+/g, '_')} content-node\n`;
-            }
-
-            // Nút người xây dựng với class builder-node
-            if (landmarkData.builders && landmarkData.builders.length > 0) {
-                mermaidCode += `    ${translations[currentLanguage].landmark_builders}\n`;
-                landmarkData.builders.forEach(builder => {
-                    const safeBuilder = safeText(builder);
-                    mermaidCode += `      "${safeBuilder}"\n`;
-                });
-                mermaidCode += `    class ${translations[currentLanguage].landmark_builders.replace(/\s+/g, '_')} builder-node\n`;
-            }
-
-            // Nút triều đại với class dynasty-node
-            if (landmarkData.dynasty) {
-                mermaidCode += `    ${translations[currentLanguage].landmark_dynasty}\n`;
-                mermaidCode += `      "${safeText(landmarkData.dynasty)}"\n`;
-                mermaidCode += `      class ${translations[currentLanguage].landmark_dynasty.replace(/\s+/g, '_')} dynasty-node\n`;
-            }
-
-            return mermaidCode;
-        }
-
-        function generateMermaidMindmap(battleData) {
-            const safeText = (text) => {
-                if (!text) return "";
-                return text.toString()
-                    .replace(/"/g, "'")
-                    .replace(/[()<>[\]&:;]/g, "")
-                    .replace(/\n/g, " ")
-                    .replace(/\s+/g, " ")
-                    .trim()
-                    .substring(0, 150);
-            };
-
-            let mermaidCode = `mindmap\n`;
-
-            // Root node với class root-node
-            mermaidCode += `  root(("${safeText(battleData.name) || translations[currentLanguage].unknown}"))\n`;
-            mermaidCode += `    class root root-node\n`;
-
-            // Time node với class time-node
+            // Time node
             if (battleData.time) {
-                mermaidCode += `    ${translations[currentLanguage].battle_time}\n`;
-                mermaidCode += `      "${safeText(battleData.time)}"\n`;
-                mermaidCode += `      class ${translations[currentLanguage].battle_time.replace(/\s+/g, '_')} time-node\n`;
+                mermaidCode += `  ${translations[currentLanguage].battle_time}("${safeText(battleData.time)}")\n`;
+                mermaidCode += `    classDef time fill:#E6F3F5,stroke:#4A90E2,stroke-width:2px,color:#333333\n`;
             }
 
-            // Location node với class location-node
+            // Location node
             if (battleData.location) {
-                mermaidCode += `    ${translations[currentLanguage].battle_location}\n`;
-                mermaidCode += `      "${safeText(battleData.location)}"\n`;
-                mermaidCode += `      class ${translations[currentLanguage].battle_location.replace(/\s+/g, '_')} location-node\n`;
+                mermaidCode += `  ${translations[currentLanguage].battle_location}("${safeText(battleData.location)}")\n`;
+                mermaidCode += `    classDef location fill:#E8F4E8,stroke:#2E7D32,stroke-width:2px,color:#333333\n`;
             }
 
-            // Factions node với class faction-node
+            // Factions node
             if (battleData.factions && battleData.factions.length > 0) {
-                mermaidCode += `    ${translations[currentLanguage].battle_factions}\n`;
-                battleData.factions.forEach(faction => {
+                mermaidCode += `  ${translations[currentLanguage].battle_factions}("Các phe")\n`;
+                battleData.factions.forEach((faction, index) => {
                     const safeFaction = safeText(faction);
-                    mermaidCode += `      "${safeFaction}"\n`;
-
+                    mermaidCode += `    ${translations[currentLanguage].battle_factions}_${index}("${safeFaction}")\n`;
+                    
                     if (battleData.commanders && battleData.commanders[faction]) {
                         const safeCommander = safeText(battleData.commanders[faction]);
-                        mermaidCode += `        "${translations[currentLanguage].battle_commanders}: ${safeCommander}"\n`;
+                        mermaidCode += `      ${translations[currentLanguage].battle_factions}_${index}_cmd("Chỉ huy: ${safeCommander}")\n`;
                     }
                 });
-                mermaidCode += `    class ${translations[currentLanguage].battle_factions.replace(/\s+/g, '_')} faction-node\n`;
+                mermaidCode += `    classDef faction fill:#FFF3E0,stroke:#F4A261,stroke-width:2px,color:#333333\n`;
             }
 
-            // Timeline node với class time-node
+            // Timeline node
             if (battleData.timeline && battleData.timeline.length > 0) {
-                mermaidCode += `    ${translations[currentLanguage].battle_timeline}\n`;
+                mermaidCode += `  ${translations[currentLanguage].battle_timeline}("Diễn biến")\n`;
                 battleData.timeline.forEach((event, index) => {
                     const safeEvent = safeText(event);
-                    mermaidCode += `      "${translations[currentLanguage].event} ${index + 1}: ${safeEvent}"\n`;
+                    mermaidCode += `    timeline_${index}("${translations[currentLanguage].event} ${index + 1}: ${safeEvent}")\n`;
                 });
-                mermaidCode += `    class ${translations[currentLanguage].battle_timeline.replace(/\s+/g, '_')} time-node\n`;
+                mermaidCode += `    classDef timeline fill:#E0F2F1,stroke:#00796B,stroke-width:2px,color:#333333\n`;
             }
 
-            // Outcome node với class outcome-node
+            // Outcome node
             if (battleData.outcome) {
-                mermaidCode += `    ${translations[currentLanguage].battle_outcome}\n`;
-                mermaidCode += `      "${safeText(battleData.outcome)}"\n`;
-                mermaidCode += `      class ${translations[currentLanguage].battle_outcome.replace(/\s+/g, '_')} outcome-node\n`;
+                mermaidCode += `  ${translations[currentLanguage].battle_outcome}("${safeText(battleData.outcome)}")\n`;
+                mermaidCode += `    classDef outcome fill:#E8EAF6,stroke:#5C6BC0,stroke-width:2px,color:#333333\n`;
             }
 
-            // Significance node với class significance-node
+            // Significance node - đã tóm gọn
             if (battleData.significance) {
-                mermaidCode += `    ${translations[currentLanguage].battle_significance}\n`;
-                mermaidCode += `      "${safeText(battleData.significance)}"\n`;
-                mermaidCode += `      class ${translations[currentLanguage].battle_significance.replace(/\s+/g, '_')} significance-node\n`;
+                const shortSignificance = battleData.significance.length > 100 ? 
+                    battleData.significance.substring(0, 100) + "..." : 
+                    battleData.significance;
+                mermaidCode += `  ${translations[currentLanguage].battle_significance}("${safeText(shortSignificance)}")\n`;
+                mermaidCode += `    classDef significance fill:#F3E5F5,stroke:#7B1FA2,stroke-width:2px,color:#333333\n`;
             }
 
+            console.log("Mã Mermaid trận chiến:", mermaidCode);
             return mermaidCode;
         }
 
-        function generateFigureMermaidMindmap(figureData) {
+        function generateFigureMindmap(figureData) {
             const safeText = (text) => {
                 if (!text) return "";
                 return text.toString()
@@ -3088,63 +2731,187 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
                     .replace(/\n/g, " ")
                     .replace(/\s+/g, " ")
                     .trim()
-                    .substring(0, 150);
+                    .substring(0, 100);
             };
 
             let mermaidCode = `mindmap\n`;
 
-            // Root node với class root-node
-            mermaidCode += `  root(("${safeText(figureData.name) || translations[currentLanguage].unknown}"))\n`;
-            mermaidCode += `    class root root-node\n`;
+            // Root node
+            mermaidCode += `  root(("${safeText(figureData.name) || 'Nhân vật'}"))\n`;
+            mermaidCode += `    classDef root fill:#F8F9F6,stroke:#F4A261,stroke-width:3px,color:#333333\n`;
 
-            // Time node với class time-node
+            // Time node
             if (figureData.time) {
-                mermaidCode += `    ${translations[currentLanguage].battle_time}\n`;
-                mermaidCode += `      "${safeText(figureData.time)}"\n`;
-                mermaidCode += `      class ${translations[currentLanguage].battle_time.replace(/\s+/g, '_')} time-node\n`;
+                mermaidCode += `  ${translations[currentLanguage].battle_time}("${safeText(figureData.time)}")\n`;
+                mermaidCode += `    classDef time fill:#E6F3F5,stroke:#4A90E2,stroke-width:2px,color:#333333\n`;
             }
 
-            // Location node với class location-node
+            // Location node
             if (figureData.location) {
-                mermaidCode += `    ${translations[currentLanguage].birth_place}\n`;
-                mermaidCode += `      "${safeText(figureData.location)}"\n`;
-                mermaidCode += `      class ${translations[currentLanguage].birth_place.replace(/\s+/g, '_')} location-node\n`;
+                mermaidCode += `  ${translations[currentLanguage].birth_place}("${safeText(figureData.location)}")\n`;
+                mermaidCode += `    classDef location fill:#E8F4E8,stroke:#2E7D32,stroke-width:2px,color:#333333\n`;
             }
 
-            // Achievements node với class achievement-node
+            // Achievements node
             if (figureData.achievements && figureData.achievements.length > 0) {
-                mermaidCode += `    ${translations[currentLanguage].battle_achievements}\n`;
-                figureData.achievements.forEach(achievement => {
+                mermaidCode += `  ${translations[currentLanguage].battle_achievements}("Thành tựu")\n`;
+                figureData.achievements.forEach((achievement, index) => {
                     const safeAchievement = safeText(achievement);
-                    mermaidCode += `      "${safeAchievement}"\n`;
+                    mermaidCode += `    achievement_${index}("${safeAchievement}")\n`;
                 });
-                mermaidCode += `    class ${translations[currentLanguage].battle_achievements.replace(/\s+/g, '_')} achievement-node\n`;
+                mermaidCode += `    classDef achievement fill:#E1F5FE,stroke:#0288D1,stroke-width:2px,color:#333333\n`;
             }
 
-            // Significance node với class significance-node
+            // Significance node - đã tóm gọn
             if (figureData.significance) {
-                mermaidCode += `    ${translations[currentLanguage].battle_significance}\n`;
-                mermaidCode += `      "${safeText(figureData.significance)}"\n`;
-                mermaidCode += `      class ${translations[currentLanguage].battle_significance.replace(/\s+/g, '_')} significance-node\n`;
+                const shortSignificance = figureData.significance.length > 100 ? 
+                    figureData.significance.substring(0, 100) + "..." : 
+                    figureData.significance;
+                mermaidCode += `  ${translations[currentLanguage].battle_significance}("${safeText(shortSignificance)}")\n`;
+                mermaidCode += `    classDef significance fill:#F3E5F5,stroke:#7B1FA2,stroke-width:2px,color:#333333\n`;
             }
 
+            console.log("Mã Mermaid nhân vật:", mermaidCode);
             return mermaidCode;
         }
 
-        async function extractCountriesFromFactions(factions) {
-            const countries = [];
-            for (const faction of factions) {
-                for (const country in countryCoordinates) {
-                    if (faction.includes(country)) {
-                        countries.push(currentLanguage === 'en' ? countryNameMap[country] || country : country);
-                        break;
-                    }
-                }
+        function generateLandmarkMindmap(landmarkData) {
+            const safeText = (text) => {
+                if (!text) return "";
+                return text.toString()
+                    .replace(/"/g, "'")
+                    .replace(/[()<>[\]&:;]/g, "")
+                    .replace(/\n/g, " ")
+                    .replace(/\s+/g, " ")
+                    .trim()
+                    .substring(0, 100);
+            };
+
+            let mermaidCode = `mindmap\n`;
+
+            // Root node
+            mermaidCode += `  root(("${safeText(landmarkData.name) || 'Địa danh'}"))\n`;
+            mermaidCode += `    classDef root fill:#F8F9F6,stroke:#F4A261,stroke-width:3px,color:#333333\n`;
+
+            // Location node
+            if (landmarkData.location) {
+                mermaidCode += `  ${translations[currentLanguage].battle_location}("${safeText(landmarkData.location)}")\n`;
+                mermaidCode += `    classDef location fill:#E8F4E8,stroke:#2E7D32,stroke-width:2px,color:#333333\n`;
             }
-            return [...new Set(countries)];
+
+            // Build time node
+            if (landmarkData.build_time) {
+                mermaidCode += `  ${translations[currentLanguage].landmark_build_time}("${safeText(landmarkData.build_time)}")\n`;
+                mermaidCode += `    classDef time fill:#E6F3F5,stroke:#4A90E2,stroke-width:2px,color:#333333\n`;
+            }
+
+            // Purpose node
+            if (landmarkData.purpose) {
+                const shortPurpose = landmarkData.purpose.length > 100 ? 
+                    landmarkData.purpose.substring(0, 100) + "..." : 
+                    landmarkData.purpose;
+                mermaidCode += `  ${translations[currentLanguage].landmark_purpose}("${safeText(shortPurpose)}")\n`;
+                mermaidCode += `    classDef purpose fill:#FFF8E1,stroke:#F4A261,stroke-width:2px,color:#333333\n`;
+            }
+
+            // Architecture node
+            if (landmarkData.architecture) {
+                const shortArchitecture = landmarkData.architecture.length > 100 ? 
+                    landmarkData.architecture.substring(0, 100) + "..." : 
+                    landmarkData.architecture;
+                mermaidCode += `  ${translations[currentLanguage].landmark_architecture}("${safeText(shortArchitecture)}")\n`;
+                mermaidCode += `    classDef architecture fill:#E0F2F1,stroke:#00796B,stroke-width:2px,color:#333333\n`;
+            }
+
+            // Dynasty node
+            if (landmarkData.dynasty) {
+                mermaidCode += `  ${translations[currentLanguage].landmark_dynasty}("${safeText(landmarkData.dynasty)}")\n`;
+                mermaidCode += `    classDef dynasty fill:#FFF3E0,stroke:#F4A261,stroke-width:2px,color:#333333\n`;
+            }
+
+            // Builders node - tóm gọn nếu có nhiều
+            if (landmarkData.builders && landmarkData.builders.length > 0) {
+                mermaidCode += `  ${translations[currentLanguage].landmark_builders}("Người xây dựng")\n`;
+                const displayBuilders = landmarkData.builders.length > 3 ? 
+                    landmarkData.builders.slice(0, 3) : landmarkData.builders;
+                displayBuilders.forEach((builder, index) => {
+                    const safeBuilder = safeText(builder);
+                    mermaidCode += `    builder_${index}("${safeBuilder}")\n`;
+                });
+                if (landmarkData.builders.length > 3) {
+                    mermaidCode += `    builder_more("... và ${landmarkData.builders.length - 3} người khác")\n`;
+                }
+                mermaidCode += `    classDef builder fill:#E8F5E9,stroke:#388E3C,stroke-width:2px,color:#333333\n`;
+            }
+
+            // Contents node - tóm gọn nếu có nhiều
+            if (landmarkData.contents && landmarkData.contents.length > 0) {
+                mermaidCode += `  ${translations[currentLanguage].landmark_contents}("Nội dung")\n`;
+                const displayContents = landmarkData.contents.length > 3 ? 
+                    landmarkData.contents.slice(0, 3) : landmarkData.contents;
+                displayContents.forEach((item, index) => {
+                    const safeItem = safeText(item);
+                    mermaidCode += `    content_${index}("${safeItem}")\n`;
+                });
+                if (landmarkData.contents.length > 3) {
+                    mermaidCode += `    content_more("... và ${landmarkData.contents.length - 3} nội dung khác")\n`;
+                }
+                mermaidCode += `    classDef content fill:#FCE4EC,stroke:#C2185B,stroke-width:2px,color:#333333\n`;
+            }
+
+            console.log("Mã Mermaid địa danh:", mermaidCode);
+            return mermaidCode;
+        }
+
+        function addColorClassesToMindmap(mindmapDiv) {
+            try {
+                const nodes = mindmapDiv.querySelectorAll('.node');
+                
+                nodes.forEach(node => {
+                    const text = node.textContent || '';
+                    
+                    if (text.includes(translations[currentLanguage].battle_time) || 
+                        text.includes(translations[currentLanguage].landmark_build_time)) {
+                        node.classList.add('time-node');
+                    } else if (text.includes(translations[currentLanguage].battle_location) || 
+                              text.includes(translations[currentLanguage].birth_place)) {
+                        node.classList.add('location-node');
+                    } else if (text.includes(translations[currentLanguage].battle_factions)) {
+                        node.classList.add('faction-node');
+                    } else if (text.includes(translations[currentLanguage].battle_commanders)) {
+                        node.classList.add('commander-node');
+                    } else if (text.includes(translations[currentLanguage].battle_outcome)) {
+                        node.classList.add('outcome-node');
+                    } else if (text.includes(translations[currentLanguage].battle_significance)) {
+                        node.classList.add('significance-node');
+                    } else if (text.includes(translations[currentLanguage].battle_achievements)) {
+                        node.classList.add('achievement-node');
+                    } else if (text.includes(translations[currentLanguage].landmark_purpose)) {
+                        node.classList.add('purpose-node');
+                    } else if (text.includes(translations[currentLanguage].landmark_architecture)) {
+                        node.classList.add('architecture-node');
+                    } else if (text.includes(translations[currentLanguage].landmark_contents)) {
+                        node.classList.add('content-node');
+                    } else if (text.includes(translations[currentLanguage].landmark_builders)) {
+                        node.classList.add('builder-node');
+                    } else if (text.includes(translations[currentLanguage].landmark_dynasty)) {
+                        node.classList.add('dynasty-node');
+                    }
+                });
+            } catch (e) {
+                console.error("Lỗi thêm màu cho mindmap:", e);
+            }
         }
 
         function addMarker(lat, lng, title) {
+            // Xóa marker cũ nếu có
+            markers.forEach(marker => {
+                if (marker && marker.remove) {
+                    marker.remove();
+                }
+            });
+            markers = [];
+            
             const marker = L.marker([lat, lng], {
                 icon: L.divIcon({
                     className: 'custom-marker',
@@ -3155,12 +2922,21 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
                     iconAnchor: [15, 30]
                 })
             }).addTo(map)
-                .bindPopup(`<div class="font-medium text-primary">${title}</div>`)
+                .bindPopup(`<div class="font-medium text-accent">${title}</div>`)
                 .openPopup();
             markers.push(marker);
         }
 
         function formatBattleData(data) {
+            let commandersHtml = '';
+            if (data.commanders) {
+                if (Array.isArray(data.commanders)) {
+                    commandersHtml = data.commanders.map(c => `<li>${c}</li>`).join('');
+                } else {
+                    commandersHtml = Object.entries(data.commanders).map(([faction, commander]) => `<li>${faction}: ${commander}</li>`).join('');
+                }
+            }
+
             return `
     <div class="battle-box">
         <h3><i class="fas fa-clock"></i> ${translations[currentLanguage].battle_time}</h3>
@@ -3169,7 +2945,7 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
     <div class="battle-box">
         <h3><i class="fas fa-map-marked-alt"></i> ${translations[currentLanguage].battle_location}</h3>
         <p>${data.location || translations[currentLanguage].unknown}</p>
-        ${data.lat && data.lng ? `<p class="mt-2 text-sm text-gray-600">${translations[currentLanguage].latitude}: ${data.lat}, ${translations[currentLanguage].longitude}: ${data.lng}</p>` : ''}
+        ${data.lat && data.lng ? `<p class="mt-2 text-sm text-secondary">${translations[currentLanguage].latitude}: ${data.lat}, ${translations[currentLanguage].longitude}: ${data.lng}</p>` : ''}
     </div>
     <div class="battle-box">
         <h3><i class="fas fa-align-left"></i> ${translations[currentLanguage].battle_summary}</h3>
@@ -3180,19 +2956,9 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
         <ul>${data.factions ? data.factions.map(faction => `<li>${faction}</li>`).join("") : `<li>${translations[currentLanguage].unknown}</li>`}</ul>
     </div>
     <div class="battle-box">
-        <h3><i class="fas fa-user-shield"></i> ${translations[currentLanguage].battle_troops}</h3>
-        <ul>${data.troop_numbers ? Object.entries(data.troop_numbers).map(([faction, troops]) => `<li>${faction}: ${troops}</li>`).join("") : `<li>${translations[currentLanguage].unknown}</li>`}</ul>
-    </div>
-    <div class="battle-box">
         <h3><i class="fas fa-crown"></i> ${translations[currentLanguage].battle_commanders}</h3>
-        <ul>${data.commanders ? Object.entries(data.commanders).map(([faction, commander]) => `<li>${faction}: ${commander}</li>`).join("") : `<li>${translations[currentLanguage].unknown}</li>`}</ul>
+        <ul>${commandersHtml || `<li>${translations[currentLanguage].unknown}</li>`}</ul>
     </div>
-    ${data.heroes && data.heroes.length > 0 ? `
-    <div class="battle-box">
-        <h3><i class="fas fa-star"></i> ${translations[currentLanguage].battle_heroes}</h3>
-        <ul>${data.heroes.map(hero => `<li>${hero.name} (${hero.role}): ${hero.description}</li>`).join("")}</ul>
-    </div>
-    ` : ''}
     ${data.outcome ? `
     <div class="battle-box">
         <h3><i class="fas fa-trophy"></i> ${translations[currentLanguage].battle_outcome}</h3>
@@ -3225,8 +2991,8 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
     <div class="battle-box">
         <h3><i class="fas fa-map-marker-alt"></i> ${translations[currentLanguage].birth_place}</h3>
         <p>${data.location || translations[currentLanguage].unknown}</p>
-        ${locationDescription ? `<p class="mt-2 text-sm text-gray-600">${locationDescription}</p>` : ''}
-        ${data.lat && data.lng ? `<p class="mt-2 text-sm text-gray-600">${translations[currentLanguage].latitude}: ${data.lat}, ${translations[currentLanguage].longitude}: ${data.lng}</p>` : ''}
+        ${locationDescription ? `<p class="mt-2 text-sm text-secondary">${locationDescription}</p>` : ''}
+        ${data.lat && data.lng ? `<p class="mt-2 text-sm text-secondary">${translations[currentLanguage].latitude}: ${data.lat}, ${translations[currentLanguage].longitude}: ${data.lng}</p>` : ''}
     </div>
     <div class="battle-box">
         <h3><i class="fas fa-align-left"></i> ${translations[currentLanguage].battle_summary}</h3>
@@ -3245,7 +3011,7 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
 
         function formatLandmarkData(data) {
             const locationDescription = currentLanguage === 'en' ?
-                transliterateVietnamese(data.description_en || translations[currentLanguage].unknown) :
+                data.description_en || translations[currentLanguage].unknown :
                 data.description_vi || translations[currentLanguage].unknown;
 
             return `
@@ -3256,8 +3022,8 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
     <div class="battle-box">
         <h3><i class="fas fa-map-marker-alt"></i> ${translations[currentLanguage].battle_location}</h3>
         <p>${data.location || translations[currentLanguage].unknown}</p>
-        ${locationDescription ? `<p class="mt-2 text-sm text-gray-600">${locationDescription}</p>` : ''}
-        ${data.lat && data.lng ? `<p class="mt-2 text-sm text-gray-600">${translations[currentLanguage].latitude}: ${data.lat}, ${translations[currentLanguage].longitude}: ${data.lng}</p>` : ''}
+        ${locationDescription ? `<p class="mt-2 text-sm text-secondary">${locationDescription}</p>` : ''}
+        ${data.lat && data.lng ? `<p class="mt-2 text-sm text-secondary">${translations[currentLanguage].latitude}: ${data.lat}, ${translations[currentLanguage].longitude}: ${data.lng}</p>` : ''}
     </div>
     <div class="battle-box">
         <h3><i class="fas fa-clock"></i> ${translations[currentLanguage].landmark_build_time}</h3>
@@ -3291,8 +3057,8 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
             messageDiv.className = `mb-4 ${role === 'user' ? 'text-right' : 'text-left'}`;
 
             const bubbleClass = role === 'user'
-                ? 'bg-primary text-white rounded-tr-none'
-                : 'bg-white text-gray-800 rounded-tl-none shadow-sm border border-gray-200';
+                ? 'bg-card text-primary rounded-tr-none border border-custom'
+                : 'bg-card text-primary rounded-tl-none border border-custom';
 
             let translatedContent = content;
             if (content.includes("Xin lỗi, tôi chỉ trả lời các câu hỏi liên quan đến lịch sử")) {
@@ -3309,7 +3075,7 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
                 <div class="inline-block max-w-[85%] rounded-xl p-4 ${bubbleClass} relative">
                     <div class="message-content">${translatedContent}</div>
                     ${role === 'assistant' ? `
-                    <span class="close-btn absolute top-2 right-2 cursor-pointer text-gray-500 hover:text-gray-700" onclick="this.parentElement.parentElement.remove()">
+                    <span class="close-btn absolute top-2 right-2 cursor-pointer hover:text-accent" onclick="this.parentElement.parentElement.remove()">
                         <i class="fas fa-times"></i>
                     </span>
                     ` : ''}
@@ -3326,9 +3092,9 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
             let formatted = content.replace(/```([\w]*)\n([\s\S]*?)```/g, (match, lang, code) => {
                 const langDisplay = lang ? lang : 'text';
                 return `<div class="code-block">
-                    <div class="code-header flex justify-between items-center px-3 py-2 bg-gray-800 text-gray-300 text-xs rounded-t-md">
+                    <div class="code-header flex justify-between items-center px-3 py-2 bg-card text-accent text-xs rounded-t-md border border-custom">
                         <span>${langDisplay}</span>
-                        <button class="copy-code-btn hover:text-white" onclick="copyToClipboard(this)" data-code="${encodeURIComponent(code.trim())}">
+                        <button class="copy-code-btn hover:text-accent" onclick="copyToClipboard(this)" data-code="${encodeURIComponent(code.trim())}">
                             <i class="fas fa-copy mr-1"></i> <span>${translations[currentLanguage].copy_code}</span>
                         </button>
                     </div>
@@ -3336,9 +3102,9 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
                 </div>`;
             });
 
-            formatted = formatted.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-            formatted = formatted.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-            formatted = formatted.replace(/`([^`]+)`/g, '<code class="bg-gray-800 px-1 py-0.5 rounded text-white">$1</code>');
+            formatted = formatted.replace(/\*\*([^*]+)\*\*/g, '<strong class="text-accent">$1</strong>');
+            formatted = formatted.replace(/\*([^*]+)\*/g, '<em class="text-accent">$1</em>');
+            formatted = formatted.replace(/`([^`]+)`/g, '<code class="bg-card px-1 py-0.5 rounded text-accent border border-custom">$1</code>');
 
             formatted = formatted.split('\n\n').map(paragraph => {
                 if (paragraph.trim().startsWith('<') && paragraph.trim().endsWith('>')) {
@@ -3417,5 +3183,4 @@ TRẢ LỜI CHỈ BẰNG JSON KHÔNG CÓ BẮT KỲ VĂN BẢN NÀO KHÁC. Cung 
         window.toggleSidebar = toggleSidebar;
     </script>
 </body>
-
 </html>
