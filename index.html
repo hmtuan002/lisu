@@ -2,16 +2,22 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bản Đồ Lịch Sử với AI Gemini</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Bản Đồ Lịch Sử - Mindmap Siêu Ngầu</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-
+    <script src="https://unpkg.com/d3@7.8.5/dist/d3.min.js"></script>
+    <script src="https://unpkg.com/markmap-lib@0.15.3/dist/browser/index.js"></script>
+    <script src="https://unpkg.com/markmap-view@0.15.3/dist/browser/index.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             font-family: 'Inter', 'Playfair Display', sans-serif;
@@ -20,6 +26,7 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
+            height: 100vh;
         }
 
         /* Màu sắc theo yêu cầu */
@@ -129,21 +136,22 @@
             color: var(--text-primary);
         }
 
-        .mindmap-container {
+        /* ===== SƠ ĐỒ TƯ DUY SIÊU NGẦU (TỪ CODE GỐC) ===== */
+        .mindmap-sieu-ngau {
             width: 100%;
-            height: 400px;
-            background-color: var(--card-bg);
-            border-radius: 0.75rem;
+            height: 300px; /* Giảm từ 500px xuống 300px */
+            background: white;
+            border-radius: 12px;
             margin: 1rem 0;
-            overflow: auto;
+            overflow: hidden;
             position: relative;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             border: 1px solid var(--border-light);
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
             cursor: pointer;
         }
 
-        .mindmap-container.expanded {
+        .mindmap-sieu-ngau.expanded {
             position: fixed;
             top: 0;
             left: 0;
@@ -153,27 +161,137 @@
             margin: 0;
             border-radius: 0;
             padding: 1rem;
-            background-color: var(--card-bg);
+            background: white;
         }
 
-        .mindmap {
+        .mindmap-sieu-ngau .mindmap-title {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 20;
+            background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+            color: white;
+            padding: 0.75rem 1rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mindmap-sieu-ngau .mindmap-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-right: 1rem;
+        }
+
+        .mindmap-sieu-ngau .control-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: var(--accent-orange);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .mindmap-sieu-ngau .control-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+            color: white;
+        }
+
+        .mindmap-sieu-ngau .mindmap-content {
             width: 100%;
             height: 100%;
-            min-height: 400px;
-            padding: 1rem;
+            padding-top: 52px;
+            position: relative;
+            background: white;
         }
 
-        .mindmap-title {
-            text-align: center;
-            font-weight: 600;
-            margin: 0;
-            padding: 1rem;
-            color: var(--accent-orange);
-            font-size: 1.1rem;
-            border-bottom: 1px solid var(--border-light);
-            background-color: var(--card-bg);
-            border-radius: 0.75rem 0.75rem 0 0;
-            font-family: 'Playfair Display', serif;
+        .mindmap-sieu-ngau .mindmap-container {
+            width: 100%;
+            height: calc(100% - 52px);
+            background: white;
+            position: relative;
+            flex: 1;
+        }
+
+        .mindmap-sieu-ngau .close-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .mindmap-sieu-ngau .close-btn:hover {
+            background: #ff6b6b;
+        }
+
+        /* Các class cho các node với màu sắc khác nhau */
+        .mindmap-sieu-ngau .markmap-node.time-node rect,
+        .mindmap-sieu-ngau .markmap-node.time-node circle,
+        .mindmap-sieu-ngau .markmap-node.time-node polygon {
+            fill: #E6F3F5 !important;
+            stroke: #4A90E2 !important;
+        }
+
+        .mindmap-sieu-ngau .markmap-node.location-node rect,
+        .mindmap-sieu-ngau .markmap-node.location-node circle,
+        .mindmap-sieu-ngau .markmap-node.location-node polygon {
+            fill: #E8F4E8 !important;
+            stroke: #2E7D32 !important;
+        }
+
+        .mindmap-sieu-ngau .markmap-node.faction-node rect,
+        .mindmap-sieu-ngau .markmap-node.faction-node circle,
+        .mindmap-sieu-ngau .markmap-node.faction-node polygon {
+            fill: #FFF3E0 !important;
+            stroke: #F4A261 !important;
+        }
+
+        .mindmap-sieu-ngau .markmap-node.commander-node rect,
+        .mindmap-sieu-ngau .markmap-node.commander-node circle,
+        .mindmap-sieu-ngau .markmap-node.commander-node polygon {
+            fill: #FFE5E5 !important;
+            stroke: #D32F2F !important;
+        }
+
+        .mindmap-sieu-ngau .markmap-node.outcome-node rect,
+        .mindmap-sieu-ngau .markmap-node.outcome-node circle,
+        .mindmap-sieu-ngau .markmap-node.outcome-node polygon {
+            fill: #E8EAF6 !important;
+            stroke: #5C6BC0 !important;
+        }
+
+        .mindmap-sieu-ngau .markmap-node.significance-node rect,
+        .mindmap-sieu-ngau .markmap-node.significance-node circle,
+        .mindmap-sieu-ngau .markmap-node.significance-node polygon {
+            fill: #F3E5F5 !important;
+            stroke: #7B1FA2 !important;
+        }
+
+        .mindmap-sieu-ngau .markmap-node.achievement-node rect,
+        .mindmap-sieu-ngau .markmap-node.achievement-node circle,
+        .mindmap-sieu-ngau .markmap-node.achievement-node polygon {
+            fill: #E1F5FE !important;
+            stroke: #0288D1 !important;
         }
 
         .loading-mindmap {
@@ -181,190 +299,18 @@
             justify-content: center;
             align-items: center;
             height: 100%;
-            color: var(--text-secondary);
-            font-size: 0.95rem;
+            color: #b71c1c;
+            font-size: 1rem;
+            background: white;
         }
 
         .mindmap-error {
-            color: var(--accent-orange);
+            color: #d32f2f;
             padding: 1.5rem;
             text-align: center;
-            font-size: 0.95rem;
-        }
-
-        /* CSS cho Mermaid với màu sắc mới */
-        .mermaid .node rect,
-        .mermaid .node circle,
-        .mermaid .node polygon {
-            fill: var(--card-bg) !important;
-            stroke: var(--accent-orange) !important;
-            stroke-width: 2px !important;
-            rx: 8px !important;
-            ry: 8px !important;
-            transition: all 0.2s ease;
-        }
-
-        .mermaid .node text {
-            fill: var(--text-primary) !important;
-            font-family: 'Playfair Display', serif !important;
-            font-size: 14px !important;
-            font-weight: 500 !important;
-        }
-
-        .mermaid .edgePath .path {
-            stroke: var(--accent-orange) !important;
-            stroke-width: 2px !important;
-        }
-
-        .mermaid .arrowheadPath {
-            fill: var(--accent-orange) !important;
-        }
-
-        /* Các class cho các node với màu sắc khác nhau */
-        .mermaid .root-node rect,
-        .mermaid .root-node circle,
-        .mermaid .root-node polygon {
-            fill: var(--card-bg) !important;
-            stroke: var(--accent-orange) !important;
-            stroke-width: 3px !important;
-        }
-
-        .mermaid .root-node text {
-            fill: var(--text-primary) !important;
-            font-weight: 700 !important;
-            font-size: 16px !important;
-        }
-
-        .mermaid .time-node rect,
-        .mermaid .time-node circle,
-        .mermaid .time-node polygon {
-            fill: #E6F3F5 !important;
-            stroke: #4A90E2 !important;
-        }
-
-        .mermaid .time-node text {
-            fill: var(--text-primary) !important;
-        }
-
-        .mermaid .location-node rect,
-        .mermaid .location-node circle,
-        .mermaid .location-node polygon {
-            fill: #E8F4E8 !important;
-            stroke: #2E7D32 !important;
-        }
-
-        .mermaid .location-node text {
-            fill: var(--text-primary) !important;
-        }
-
-        .mermaid .faction-node rect,
-        .mermaid .faction-node circle,
-        .mermaid .faction-node polygon {
-            fill: #FFF3E0 !important;
-            stroke: #F4A261 !important;
-        }
-
-        .mermaid .faction-node text {
-            fill: var(--text-primary) !important;
-        }
-
-        .mermaid .commander-node rect,
-        .mermaid .commander-node circle,
-        .mermaid .commander-node polygon {
-            fill: #FFE5E5 !important;
-            stroke: #D32F2F !important;
-        }
-
-        .mermaid .commander-node text {
-            fill: var(--text-primary) !important;
-        }
-
-        .mermaid .outcome-node rect,
-        .mermaid .outcome-node circle,
-        .mermaid .outcome-node polygon {
-            fill: #E8EAF6 !important;
-            stroke: #5C6BC0 !important;
-        }
-
-        .mermaid .outcome-node text {
-            fill: var(--text-primary) !important;
-        }
-
-        .mermaid .significance-node rect,
-        .mermaid .significance-node circle,
-        .mermaid .significance-node polygon {
-            fill: #F3E5F5 !important;
-            stroke: #7B1FA2 !important;
-        }
-
-        .mermaid .significance-node text {
-            fill: var(--text-primary) !important;
-        }
-
-        .mermaid .achievement-node rect,
-        .mermaid .achievement-node circle,
-        .mermaid .achievement-node polygon {
-            fill: #E1F5FE !important;
-            stroke: #0288D1 !important;
-        }
-
-        .mermaid .achievement-node text {
-            fill: var(--text-primary) !important;
-        }
-
-        .mermaid .purpose-node rect,
-        .mermaid .purpose-node circle,
-        .mermaid .purpose-node polygon {
-            fill: #FFF8E1 !important;
-            stroke: #F4A261 !important;
-        }
-
-        .mermaid .purpose-node text {
-            fill: var(--text-primary) !important;
-        }
-
-        .mermaid .architecture-node rect,
-        .mermaid .architecture-node circle,
-        .mermaid .architecture-node polygon {
-            fill: #E0F2F1 !important;
-            stroke: #00796B !important;
-        }
-
-        .mermaid .architecture-node text {
-            fill: var(--text-primary) !important;
-        }
-
-        .mermaid .content-node rect,
-        .mermaid .content-node circle,
-        .mermaid .content-node polygon {
-            fill: #FCE4EC !important;
-            stroke: #C2185B !important;
-        }
-
-        .mermaid .content-node text {
-            fill: var(--text-primary) !important;
-        }
-
-        .mermaid .builder-node rect,
-        .mermaid .builder-node circle,
-        .mermaid .builder-node polygon {
-            fill: #E8F5E9 !important;
-            stroke: #388E3C !important;
-        }
-
-        .mermaid .builder-node text {
-            fill: var(--text-primary) !important;
-        }
-
-        .mermaid .dynasty-node rect,
-        .mermaid .dynasty-node circle,
-        .mermaid .dynasty-node polygon {
-            fill: #FFF3E0 !important;
-            stroke: #F4A261 !important;
-        }
-
-        .mermaid .dynasty-node text {
-            fill: var(--text-primary) !important;
+            font-size: 1rem;
+            background: white;
+            border-radius: 1rem;
         }
 
         .history-info-box {
@@ -383,6 +329,10 @@
         .history-info-box h2 {
             color: var(--accent-orange);
             font-family: 'Playfair Display', serif;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
         }
 
         .history-info-box p {
@@ -416,7 +366,7 @@
 
         .close-btn {
             cursor: pointer;
-            font-size: 1.25rem;
+            font-size: 1.75rem;
             color: var(--text-secondary);
             transition: color 0.2s;
         }
@@ -485,11 +435,12 @@
         .search-wrapper {
             position: relative;
             margin-bottom: 1rem;
+            margin-top: 1rem; /* Dịch xuống dưới */
         }
 
         #search-input {
             width: 100%;
-            padding: 1rem 5rem 1rem 1.2rem;
+            padding: 0.75rem 5rem 0.75rem 1.2rem; /* Giảm padding để thành 1 hàng */
             border-radius: 2rem;
             border: 1px solid var(--border-light);
             background-color: var(--input-bg);
@@ -497,11 +448,13 @@
             font-family: 'Inter', sans-serif;
             font-size: 1rem;
             line-height: 1.5;
-            resize: none;
+            resize: none; /* Không cho kéo */
             transition: all 0.2s;
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
-            min-height: 5rem;
-            max-height: 8rem;
+            height: 48px; /* Chiều cao cố định 1 hàng */
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
         }
 
         #search-input:focus {
@@ -514,48 +467,51 @@
             color: var(--text-secondary);
             font-style: italic;
             font-size: 0.95rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-.search-button {
-    position: absolute;
-    top: 50%;                    
-    bottom: auto;                 
-    left: 16rem;                  
-    right: auto;
-    transform: translateY(-50%);  
-    background-color: var(--button-cyan);
-    color: white;
-    border: none;
-    border-radius: 2rem;
-    padding: 0.6rem 1.2rem;
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: none;  /* ← TẮT HOÀN TOÀN HIỆU ỨNG CHUYỂN ĐỘNG */
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    box-shadow: 0 2px 5px rgba(110, 198, 217, 0.3);
-}
+        .search-button {
+            position: absolute;
+            top: 50%;
+            bottom: auto;
+            right: 0.5rem;
+            transform: translateY(-50%);
+            background-color: var(--button-cyan);
+            color: white;
+            border: none;
+            border-radius: 2rem;
+            padding: 0.4rem 1rem; /* Giảm padding */
+            font-weight: 600;
+            font-size: 0.9rem; /* Giảm font size */
+            cursor: pointer;
+            transition: none;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            box-shadow: 0 2px 5px rgba(110, 198, 217, 0.3);
+        }
 
-.search-button:hover {
-    background-color: #5db8cc;
-    transform: translateY(-50%);  /* Giữ nguyên, không dịch chuyển */
-    box-shadow: 0 2px 5px rgba(110, 198, 217, 0.3);
-}
+        .search-button:hover {
+            background-color: #5db8cc;
+            transform: translateY(-50%);
+            box-shadow: 0 2px 5px rgba(110, 198, 217, 0.3);
+        }
 
-.search-button:active {
-    transform: translateY(-50%);  /* Giữ nguyên khi bấm */
-    background-color: var(--button-cyan);
-}
+        .search-button:active {
+            transform: translateY(-50%);
+            background-color: var(--button-cyan);
+        }
+
         .search-button i {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
 
         .sidebar-header {
             border-bottom: 1px solid var(--border-light);
-            padding-bottom: 1rem;
-            margin-bottom: 1rem;
+            padding-bottom: 0.01rem; /* Giảm padding bottom */
+            margin-bottom: 0.01rem; /* Giảm margin bottom */
             background-color: var(--card-bg);
             border-radius: 1rem 1rem 0 0;
         }
@@ -738,7 +694,7 @@
 
         .sidebar-toggle {
             position: absolute;
-            top: 1rem;
+            top: 0.1rem;
             right: -1.5rem;
             width: 3rem;
             height: 3rem;
@@ -780,7 +736,7 @@
         }
 
         #sidebar {
-            width: 384px;
+            width: 400px;
             height: 100%;
             background-color: var(--card-bg);
             box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
@@ -806,25 +762,10 @@
             border-radius: 0;
         }
 
-        .typing-indicator {
-            background-color: var(--card-bg);
-            border-radius: 1rem;
-            padding: 1rem;
-            border: 1px solid var(--border-light);
-        }
-
-        .stop-button {
-            background-color: #ff6b6b;
-            color: white;
-            border: none;
-            border-radius: 2rem;
-            padding: 0.75rem 1.5rem;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-
-        .stop-button:hover {
-            background-color: #ff5252;
+        /* Ẩn typing indicator và stop button */
+        .typing-indicator,
+        #stop-button-container {
+            display: none !important;
         }
 
         .loading-screen {
@@ -1027,13 +968,14 @@
             color: var(--text-primary);
         }
 
-.language-switch {
-    display: flex;
-    align-items: center;
-    position: relative;
-    right: 15px;              /* ← Giá trị âm để kéo sang trái */
-    /* right: -10px sẽ kéo sang phải, right: 10px sẽ kéo sang trái */
-}
+        .language-switch {
+            display: flex;
+            align-items: center;
+            position: relative;
+            right: 35px; 
+            margin-top: 15px; 
+        }
+
         .switch {
             position: relative;
             display: inline-block;
@@ -1099,6 +1041,53 @@
         .header-title i {
             color: var(--accent-orange);
         }
+
+        /* Ẩn các nút không cần thiết trong chế độ thu nhỏ */
+        .mindmap-controls-hidden {
+            display: none !important;
+        }
+
+        /* CSS cho markmap từ code gốc */
+        .markmap-node circle,
+        .markmap-node rect,
+        .markmap-node polygon {
+            fill: #ffebee !important;
+            stroke: #d32f2f !important;
+            stroke-width: 2px !important;
+            rx: 8px !important;
+            ry: 8px !important;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+            transition: all 0.2s ease;
+        }
+
+        .markmap-node:hover circle,
+        .markmap-node:hover rect,
+        .markmap-node:hover polygon {
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+            stroke-width: 3px !important;
+        }
+
+        .markmap-node text {
+            fill: #b71c1c !important;
+            font-family: 'Playfair Display', serif !important;
+            font-size: 14px !important;
+            font-weight: 500 !important;
+        }
+
+        .markmap-node.root-node text {
+            font-size: 18px !important;
+            font-weight: 700 !important;
+            fill: #d32f2f !important;
+        }
+
+        .markmap-link path {
+            stroke: #d32f2f !important;
+            stroke-width: 2px !important;
+        }
+
+        .markmap-arrow {
+            fill: #d32f2f !important;
+        }
     </style>
 </head>
 
@@ -1145,13 +1134,13 @@
                     </div>
                 </div>
 
-                <form id="search-form" class="mt-4">
+                <form id="search-form" class="mt-2"> <!-- Giảm margin top -->
                     <div class="search-wrapper">
                         <textarea id="search-input" rows="1"
                             class="w-full"
-                            placeholder="Nhập sự kiện lịch sử, nhân vật hoặc địa danh..."></textarea>
+                            placeholder="Nhập sự kiện lịch sử, nhân vật, địa điểm"></textarea>
                         <button type="submit" class="search-button">
-                            <i class="fas fa-paper-plane"></i> GỬI
+                            <i class="fas fa-paper-plane"></i> 
                         </button>
                     </div>
                 </form>
@@ -1159,17 +1148,7 @@
 
             <div class="content-container">
                 <div id="result-messages" class="flex flex-col gap-4 w-full"></div>
-                <div id="typing-indicator"
-                    class="hidden mt-4 p-4 bg-card rounded-xl text-secondary text-sm flex items-center border border-custom typing-indicator">
-                    <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-accent mr-3"></div>
-                    <span>AI đang tìm kiếm, vui lòng đợi...</span>
-                </div>
-                <div id="stop-button-container" class="hidden mt-4">
-                    <button id="stop-response-btn"
-                        class="stop-button w-full">
-                        <i class="fas fa-stop mr-2"></i> Dừng tìm kiếm
-                    </button>
-                </div>
+                <!-- Đã ẩn typing-indicator và stop-button-container bằng CSS -->
             </div>
         </div>
 
@@ -1192,15 +1171,23 @@
     <script type="module">
         import { GoogleGenerativeAI } from "@google/generative-ai";
 
-        const API_KEY = "AIzaSyCoAtWhBdBR2y0-wBQl8fyUGSDIyP9NlDY";
+        // ==================== CẤU HÌNH ====================
+        const ORIGINAL_API_KEY = "opW247Di-0FIVt7ik_Pnij73b34xmWFEDySazIA";
+        
+        function reverseApiKey(apiKey) {
+            return apiKey.split('').reverse().join('');
+        }
+        
+        const API_KEY = reverseApiKey(ORIGINAL_API_KEY);
+        console.log("API Key đã được đảo ngược bảo mật");
+
         const genAI = new GoogleGenerativeAI(API_KEY);
         const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
+        // ==================== BIẾN TOÀN CỤC ====================
         const searchForm = document.getElementById('search-form');
         const searchInput = document.getElementById('search-input');
         const resultMessages = document.getElementById('result-messages');
-        const typingIndicator = document.getElementById('typing-indicator');
-        const stopButtonContainer = document.getElementById('stop-button-container');
         const loadingScreen = document.getElementById('loading-screen');
         const sidebar = document.getElementById('sidebar');
         const mapContainer = document.getElementById('map-container');
@@ -1222,12 +1209,14 @@
         let currentSpeechText = '';
         let keyLocations = [];
 
+        // ==================== BIẾN MARKMAP (TỪ CODE GỐC) ====================
+        let transformer = null;
+
+        // ==================== DỊCH THUẬT ====================
         const translations = {
             vi: {
                 title: "Bản Đồ Lịch Sử",
-                search_placeholder: "Nhập sự kiện lịch sử, nhân vật hoặc địa danh...",
-                typing_indicator: "AI đang tìm kiếm, vui lòng đợi...",
-                stop_button: "Dừng tìm kiếm",
+                search_placeholder: "Nhập sự kiện lịch sử, nhân vật, địa điểm",
                 country_info_close: "Nhấp vào bản đồ để đóng thông tin",
                 map_label: "Bản đồ lịch sử",
                 battle_name: "Tên Nhân Vật",
@@ -1246,13 +1235,13 @@
                 battle_significance: "Tác động Lịch Sử",
                 event: "Sự kiện",
                 battle_heroes: "Anh Hùng Tiêu Biểu",
-                mindmap_title: "Sơ Đồ Tư Duy Trận Chiến",
+                mindmap_title: "🧠 SƠ ĐỒ TƯ DUY",
                 non_history_error: "Xin lỗi, tôi chỉ trả lời các câu hỏi liên quan đến lịch sử. Vui lòng nhập một truy vấn về lịch sử!",
                 map_error: "Lỗi tải dữ liệu bản đồ, vui lòng thử lại sau.",
                 processing_error: "Lỗi khi xử lý yêu cầu. Vui lòng thử lại!",
                 copy_code: "Sao chép mã",
                 birth_place: "Nơi sinh",
-                figure_mindmap_title: "Sơ Đồ Tư Duy Nhân Vật",
+                figure_mindmap_title: "🧠 SƠ ĐỒ TƯ DUY - NHÂN VẬT",
                 battle_achievements: "Thành Tựu Nổi Bật",
                 copied: "Đã sao chép!",
                 landmark_build_time: "Thời gian xây dựng",
@@ -1275,17 +1264,18 @@
                 landmark_contents: "Nội dung bên trong",
                 landmark_builders: "Người xây dựng",
                 landmark_dynasty: "Triều đại",
-                landmark_mindmap_title: "Sơ Đồ Tư Duy Địa Danh",
+                landmark_mindmap_title: "🧠 SƠ ĐỒ TƯ DUY - ĐỊA DANH",
                 loading_text_1: "AI đang tạo nội dung...",
                 loading_text_2: "Đang xử lý dữ liệu...",
                 loading_text_3: "Đang phân tích thông tin...",
-                loading_text_4: "Đang tổng hợp nội dung..."
+                loading_text_4: "Đang tổng hợp nội dung...",
+                zoom_in: "Phóng to",
+                zoom_out: "Thu nhỏ",
+                save_image: "Lưu ảnh"
             },
             en: {
                 title: "Historical Map",
                 search_placeholder: "Enter historical event, figure or landmark...",
-                typing_indicator: "AI is searching, please wait...",
-                stop_button: "Stop Search",
                 country_info_close: "Click the map to close the information",
                 map_label: "Historical Map",
                 battle_name: "Character Name",
@@ -1306,8 +1296,8 @@
                 battle_significance: "Historical Significance",
                 battle_heroes: "Notable Heroes",
                 event: "Event",
-                mindmap_title: "Battle Mind Map",
-                figure_mindmap_title: "Character Mind Map",
+                mindmap_title: "🧠 MIND MAP",
+                figure_mindmap_title: "🧠 MIND MAP - FIGURE",
                 battle_achievements: "Notable Achievements",
                 non_history_error: "Sorry, I only answer questions related to history. Please enter a history-related query!",
                 map_error: "Error loading map data, please try again later.",
@@ -1333,11 +1323,14 @@
                 landmark_contents: "Contents Inside",
                 landmark_builders: "Builders",
                 landmark_dynasty: "Dynasty",
-                landmark_mindmap_title: "Landmark Mind Map",
+                landmark_mindmap_title: "🧠 MIND MAP - LANDMARK",
                 loading_text_1: "AI is creating content...",
                 loading_text_2: "Processing data...",
                 loading_text_3: "Analyzing information...",
-                loading_text_4: "Synthesizing content..."
+                loading_text_4: "Synthesizing content...",
+                zoom_in: "Zoom in",
+                zoom_out: "Zoom out",
+                save_image: "Save image"
             }
         };
 
@@ -1456,6 +1449,7 @@
 
         let currentLanguage = 'vi';
 
+        // ==================== HÀM DỊCH THUẬT ====================
         function updateLanguage(lang) {
             currentLanguage = lang;
             document.documentElement.lang = lang;
@@ -1555,36 +1549,17 @@
                 );
         }
 
+        // ==================== HÀM KHỞI TẠO ỨNG DỤNG ====================
         function initApp() {
             initMap();
             setupEventListeners();
-            mermaid.initialize({
-                startOnLoad: false,
-                theme: 'base',
-                themeVariables: {
-                    'background': '#F8F9F6',
-                    'primaryColor': '#F8F9F6',
-                    'primaryTextColor': '#333333',
-                    'primaryBorderColor': '#F4A261',
-                    'lineColor': '#F4A261',
-                    'secondaryColor': '#F4F7F8',
-                    'tertiaryColor': '#E3E6E8'
-                },
-                flowchart: {
-                    useMaxWidth: false,
-                    htmlLabels: true,
-                    curve: 'basis',
-                    nodeSpacing: 50,
-                    rankSpacing: 100
-                },
-                mindmap: {
-                    useMaxWidth: false,
-                    padding: 10
-                }
-            });
             updateLanguage('vi');
             languageToggle.addEventListener('change', toggleLanguage);
             checkUrlParameters();
+
+            // Khởi tạo Markmap Transformer
+            const { Transformer } = window.markmap;
+            transformer = new Transformer();
         }
 
         function checkUrlParameters() {
@@ -1688,17 +1663,15 @@
             const historyInfoBox = document.createElement('div');
             historyInfoBox.className = 'history-info-box';
             historyInfoBox.innerHTML = `
-                <div class="relative">
-                    <h2 class="text-xl font-bold flex items-center">
-                        <span>
-                            <i class="fas fa-flag mr-2 text-accent"></i>
-                            ${displayName}
-                        </span>
-                    </h2>
-                    <span class="close-btn absolute top-2 right-2" onclick="this.parentElement.parentElement.remove(); closeHistoryInfo();">
+                <h2 class="text-xl font-bold flex items-center">
+                    <span>
+                        <i class="fas fa-flag mr-2 text-accent"></i>
+                        ${displayName}
+                    </span>
+                    <span class="close-btn" onclick="this.parentElement.parentElement.remove(); closeHistoryInfo();">
                         <i class="fas fa-times"></i>
                     </span>
-                </div>
+                </h2>
                 <div class="mt-4">
                     <p class="mb-4">${historyData[translatedName]?.history[currentLanguage] || translations[currentLanguage].no_summary}</p>
                     <div class="flex items-center text-sm text-secondary">
@@ -1775,26 +1748,12 @@
                     }
                 }
             });
-
-            document.getElementById('stop-response-btn').addEventListener('click', () => {
-                isStopped = true;
-                stopButtonContainer.classList.add('hidden');
-                typingIndicator.classList.add('hidden');
-                hideLoadingScreen();
-
-                if (abortController) {
-                    abortController.abort();
-                }
-
-                stopSpeech();
-            });
         }
 
         function clearPreviousData() {
             currentQueries = [];
             resultMessages.innerHTML = '';
             
-            // Xóa tất cả markers chính
             markers.forEach(marker => {
                 if (marker && marker.remove) {
                     marker.remove();
@@ -1802,7 +1761,6 @@
             });
             markers = [];
             
-            // Xóa tất cả key locations markers
             keyLocations.forEach(loc => {
                 if (loc && loc.remove) {
                     loc.remove();
@@ -1817,6 +1775,7 @@
             stopSpeech();
         }
 
+        // ==================== XỬ LÝ TÌM KIẾM CHÍNH ====================
         async function handleSubmit(e) {
             if (e) e.preventDefault();
 
@@ -1836,8 +1795,6 @@
             });
 
             searchInput.value = "";
-            typingIndicator.classList.remove("hidden");
-            stopButtonContainer.classList.remove("hidden");
             showLoadingScreen();
 
             abortController = new AbortController();
@@ -1851,8 +1808,6 @@
                     if (countryName) {
                         toggleCountry(countryName);
                         isSending = false;
-                        typingIndicator.classList.add("hidden");
-                        stopButtonContainer.classList.add("hidden");
                         hideLoadingScreen();
                         return;
                     }
@@ -1876,7 +1831,8 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                 } else if (isBattleQuery(userQuery)) {
                     responseType = "battle";
                     prompt = `
-TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thông tin về trận chiến "${userQuery}" bằng ngôn ngữ ${currentLanguage === 'vi' ? 'tiếng Việt' : 'tiếng Anh'}. JSON phải có cấu trúc:
+TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thông tin chi tiết về trận chiến lịch sử "${userQuery}" bằng ngôn ngữ ${currentLanguage === 'vi' ? 'tiếng Việt' : 'tiếng Anh'}. JSON phải có cấu trúc:
+
 {
     "name": "Tên trận chiến",
     "time": "Thời gian diễn ra",
@@ -1884,6 +1840,11 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
     "lat": 10.38,
     "lng": 106.35,
     "summary": "Tóm tắt trận chiến",
+    "troops": "Quân số (ví dụ: '50.000 quân Việt Nam, 80.000 quân địch')",
+    "tactics": "Chiến thuật sử dụng trong trận (ví dụ: 'Tập kích, bao vây, phục kích')",
+    "casualties": "Thương vong (ví dụ: 'Việt Nam: 5.000, Địch: 20.000')",
+    "heroes": ["Danh sách anh hùng tiêu biểu trong trận", "Tên anh hùng 1", "Tên anh hùng 2"],
+    "key_locations": ["Địa điểm quan trọng 1 (có thể kèm tọa độ)", "Địa điểm quan trọng 2"],
     "factions": ["Danh sách các phe tham gia"],
     "commanders": {"Phe A": "Tên chỉ huy", "Phe B": "Tên chỉ huy"},
     "timeline": ["Sự kiện 1", "Sự kiện 2", "Sự kiện 3"],
@@ -1920,7 +1881,7 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                         parts: [{ text: query.content }]
                     })),
                     generationConfig: {
-                        maxOutputTokens: 2000,
+                        maxOutputTokens: 3000,
                         temperature: 0.7,
                         topP: 0.1,
                         topK: 16,
@@ -1997,10 +1958,13 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                         }
 
                         if (!isStopped) {
-                            const mindmapDiv = createMindmapContainer(landmarkData.name || userQuery, translations[currentLanguage].landmark_mindmap_title);
+                            // Tạo sơ đồ tư duy bằng markmap
+                            const mindmapDiv = createMindmapContainerSieuNgau(landmarkData.name || userQuery, translations[currentLanguage].landmark_mindmap_title);
                             resultContainer.querySelector('.result-content').appendChild(mindmapDiv);
 
-                            await generateMindmap(landmarkData, mindmapDiv);
+                            // Tạo nội dung Markdown cho markmap từ dữ liệu
+                            const markdownContent = generateLandmarkMarkdown(landmarkData);
+                            await renderMarkmap(mindmapDiv, markdownContent);
 
                             const narrationText = generateNarrationText(landmarkData);
                             const audioControls = createAudioControls(narrationText, landmarkData.name || userQuery);
@@ -2077,10 +2041,11 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                         }
 
                         if (!isStopped) {
-                            const mindmapDiv = createMindmapContainer(figureData.name || userQuery, translations[currentLanguage].figure_mindmap_title);
+                            const mindmapDiv = createMindmapContainerSieuNgau(figureData.name || userQuery, translations[currentLanguage].figure_mindmap_title);
                             resultContainer.querySelector('.result-content').appendChild(mindmapDiv);
 
-                            await generateMindmap(figureData, mindmapDiv);
+                            const markdownContent = generateFigureMarkdown(figureData);
+                            await renderMarkmap(mindmapDiv, markdownContent);
                             
                             const narrationText = generateNarrationText(figureData);
                             const audioControls = createAudioControls(narrationText, figureData.name || userQuery);
@@ -2171,11 +2136,32 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                             }
                         }
 
+                        if (battleData.key_locations && Array.isArray(battleData.key_locations)) {
+                            for (const location of battleData.key_locations) {
+                                const locCoords = await getLocationCoordinates(location);
+                                if (locCoords && locCoords.lat && locCoords.lng) {
+                                    const keyMarker = L.marker([locCoords.lat, locCoords.lng], {
+                                        icon: L.divIcon({
+                                            className: 'custom-marker',
+                                            html: `<div class="key-location-marker">
+                                                      <i class="fas fa-flag"></i>
+                                                  </div>`,
+                                            iconSize: [24, 24],
+                                            iconAnchor: [12, 24]
+                                        })
+                                    }).addTo(map)
+                                        .bindPopup(`<div class="font-medium text-accent">${location}</div>`);
+                                    keyLocations.push(keyMarker);
+                                }
+                            }
+                        }
+
                         if (!isStopped) {
-                            const mindmapDiv = createMindmapContainer(battleData.name || userQuery, translations[currentLanguage].mindmap_title);
+                            const mindmapDiv = createMindmapContainerSieuNgau(battleData.name || userQuery, translations[currentLanguage].mindmap_title);
                             resultContainer.querySelector('.result-content').appendChild(mindmapDiv);
 
-                            await generateMindmap(battleData, mindmapDiv);
+                            const markdownContent = generateBattleMarkdown(battleData);
+                            await renderMarkmap(mindmapDiv, markdownContent);
 
                             if (battleData.timeline && Array.isArray(battleData.timeline) && battleData.timeline.length > 0) {
                                 const timelineDiv = document.createElement('div');
@@ -2237,8 +2223,6 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                 }
             } finally {
                 isSending = false;
-                typingIndicator.classList.add("hidden");
-                stopButtonContainer.classList.add("hidden");
                 hideLoadingScreen();
                 abortController = null;
                 scrollToTop();
@@ -2336,6 +2320,21 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                 let narration = `Trận ${data.name || 'lịch sử'} diễn ra vào ${data.time || 'thời gian không xác định'}. `;
                 if (data.location) {
                     narration += `Trận chiến diễn ra tại ${data.location}. `;
+                }
+                if (data.troops) {
+                    narration += `Quân số tham chiến: ${data.troops}. `;
+                }
+                if (data.tactics) {
+                    narration += `Chiến thuật được sử dụng: ${data.tactics}. `;
+                }
+                if (data.casualties) {
+                    narration += `Thương vong: ${data.casualties}. `;
+                }
+                if (data.heroes && data.heroes.length > 0) {
+                    narration += `Anh hùng tiêu biểu: ${data.heroes.join(', ')}. `;
+                }
+                if (data.key_locations && data.key_locations.length > 0) {
+                    narration += `Các địa điểm quan trọng: ${data.key_locations.join(', ')}. `;
                 }
                 if (data.factions && data.factions.length > 0) {
                     narration += `Các phe tham gia gồm: ${data.factions.join(' và ')}. `;
@@ -2546,365 +2545,333 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
             return container;
         }
 
-        function createMindmapContainer(title, mindmapTitle) {
+        // ==================== SƠ ĐỒ TƯ DUY SIÊU NGẦU (TỪ CODE GỐC) ====================
+        function createMindmapContainerSieuNgau(title, mindmapTitle) {
             const mindmapDiv = document.createElement('div');
-            mindmapDiv.className = 'mindmap-container';
+            mindmapDiv.className = 'mindmap-sieu-ngau';
+            
             mindmapDiv.innerHTML = `
-                <div class="mindmap-title relative">
-                    ${mindmapTitle}: ${title}
-                    <span class="close-btn absolute top-2 right-2 cursor-pointer hover:text-accent" onclick="this.parentElement.parentElement.remove()">
-                        <i class="fas fa-times"></i>
-                    </span>
+                <div class="mindmap-title">
+                    <span>${mindmapTitle}: ${title}</span>
+                    <div class="mindmap-controls mindmap-controls-hidden">
+                        <button class="control-btn zoom-in" title="${translations[currentLanguage].zoom_in}">
+                            <i class="fas fa-search-plus"></i>
+                        </button>
+                        <button class="control-btn zoom-out" title="${translations[currentLanguage].zoom_out}">
+                            <i class="fas fa-search-minus"></i>
+                        </button>
+                        <button class="control-btn save-image" title="${translations[currentLanguage].save_image}">
+                            <i class="fas fa-camera"></i>
+                        </button>
+                    </div>
                 </div>
-                <div class="loading-mindmap">${translations[currentLanguage].typing_indicator}</div>
+                <div class="mindmap-content">
+                    <div class="loading-mindmap">${translations[currentLanguage].ai_assistant}</div>
+                </div>
             `;
 
             mindmapDiv.addEventListener('click', function (e) {
-                if (e.target === this || e.target.classList.contains('mindmap-title')) {
+                if (e.target === this || (e.target.closest('.mindmap-title') && !e.target.closest('.control-btn'))) {
                     this.classList.toggle('expanded');
+                    
+                    const controls = this.querySelector('.mindmap-controls');
+                    if (controls) {
+                        if (this.classList.contains('expanded')) {
+                            controls.classList.remove('mindmap-controls-hidden');
+                        } else {
+                            controls.classList.add('mindmap-controls-hidden');
+                        }
+                    }
+                    
+                    // Fit ngay lập tức khi mở rộng
+                    setTimeout(() => {
+                        if (this.mm) {
+                            this.mm.fit();
+                        }
+                    }, 50);
                 }
             });
 
             return mindmapDiv;
         }
 
-        // ==================================================
-        // CODE SƠ ĐỒ TƯ DUY MỚI (ĐÃ SỬA LỖI)
-        // ==================================================
-        async function generateMindmap(data, container) {
+        // ==================== TẠO NỘI DUNG MARKDOWN CHO MARKMAP ====================
+        function generateBattleMarkdown(battleData) {
+            const safeText = (text) => {
+                if (!text) return "";
+                return text.toString()
+                    .replace(/\n/g, " ")
+                    .replace(/\s+/g, " ")
+                    .trim();
+            };
+
+            let markdown = `# ⚔️ ${safeText(battleData.name) || 'TRẬN CHIẾN'}\n`;
+
+            if (battleData.time) {
+                markdown += `\n## ⏰ ${translations[currentLanguage].battle_time}\n`;
+                markdown += `- ${safeText(battleData.time)}\n`;
+            }
+
+            if (battleData.location) {
+                markdown += `\n## 📍 ${translations[currentLanguage].battle_location}\n`;
+                markdown += `- ${safeText(battleData.location)}\n`;
+            }
+
+            if (battleData.troops) {
+                markdown += `\n## ⚔️ ${translations[currentLanguage].battle_troops}\n`;
+                markdown += `- ${safeText(battleData.troops)}\n`;
+            }
+
+            if (battleData.tactics) {
+                markdown += `\n## 🎯 ${translations[currentLanguage].battle_tactics}\n`;
+                markdown += `- ${safeText(battleData.tactics)}\n`;
+            }
+
+            if (battleData.casualties) {
+                markdown += `\n## 💔 ${translations[currentLanguage].battle_casualties}\n`;
+                markdown += `- ${safeText(battleData.casualties)}\n`;
+            }
+
+            if (battleData.heroes && battleData.heroes.length > 0) {
+                markdown += `\n## 🦸 ${translations[currentLanguage].battle_heroes}\n`;
+                battleData.heroes.slice(0, 5).forEach(hero => {
+                    markdown += `- ✨ ${safeText(hero)}\n`;
+                });
+            }
+
+            if (battleData.key_locations && battleData.key_locations.length > 0) {
+                markdown += `\n## 🏰 ${translations[currentLanguage].key_locations}\n`;
+                battleData.key_locations.slice(0, 5).forEach(loc => {
+                    markdown += `- 📍 ${safeText(loc)}\n`;
+                });
+            }
+
+            if (battleData.factions && battleData.factions.length > 0) {
+                markdown += `\n## ⚔️ ${translations[currentLanguage].battle_factions}\n`;
+                battleData.factions.forEach(faction => {
+                    markdown += `- ${safeText(faction)}\n`;
+                    if (battleData.commanders && battleData.commanders[faction]) {
+                        markdown += `  - 👑 ${safeText(battleData.commanders[faction])}\n`;
+                    }
+                });
+            }
+
+            if (battleData.outcome) {
+                markdown += `\n## 🏆 ${translations[currentLanguage].battle_outcome}\n`;
+                markdown += `- ${safeText(battleData.outcome)}\n`;
+            }
+
+            if (battleData.significance) {
+                markdown += `\n## 🌟 ${translations[currentLanguage].battle_significance}\n`;
+                const shortSignificance = battleData.significance.length > 150 ? 
+                    battleData.significance.substring(0, 150) + "..." : 
+                    battleData.significance;
+                markdown += `- ${safeText(shortSignificance)}\n`;
+            }
+
+            return markdown;
+        }
+
+        function generateFigureMarkdown(figureData) {
+            const safeText = (text) => {
+                if (!text) return "";
+                return text.toString()
+                    .replace(/\n/g, " ")
+                    .replace(/\s+/g, " ")
+                    .trim();
+            };
+
+            let markdown = `# 👑 ${safeText(figureData.name) || 'NHÂN VẬT'}\n`;
+
+            if (figureData.time) {
+                markdown += `\n## ⏰ ${translations[currentLanguage].battle_time}\n`;
+                markdown += `- ${safeText(figureData.time)}\n`;
+            }
+
+            if (figureData.location) {
+                markdown += `\n## 📍 ${translations[currentLanguage].birth_place}\n`;
+                markdown += `- ${safeText(figureData.location)}\n`;
+            }
+
+            if (figureData.achievements && figureData.achievements.length > 0) {
+                markdown += `\n## 🏆 ${translations[currentLanguage].battle_achievements}\n`;
+                figureData.achievements.slice(0, 5).forEach(achievement => {
+                    markdown += `- ✨ ${safeText(achievement)}\n`;
+                });
+            }
+
+            if (figureData.significance) {
+                markdown += `\n## 🌟 ${translations[currentLanguage].battle_significance}\n`;
+                const shortSignificance = figureData.significance.length > 150 ? 
+                    figureData.significance.substring(0, 150) + "..." : 
+                    figureData.significance;
+                markdown += `- ${safeText(shortSignificance)}\n`;
+            }
+
+            return markdown;
+        }
+
+        function generateLandmarkMarkdown(landmarkData) {
+            const safeText = (text) => {
+                if (!text) return "";
+                return text.toString()
+                    .replace(/\n/g, " ")
+                    .replace(/\s+/g, " ")
+                    .trim();
+            };
+
+            let markdown = `# 🏰 ${safeText(landmarkData.name) || 'ĐỊA DANH'}\n`;
+
+            if (landmarkData.location) {
+                markdown += `\n## 📍 ${translations[currentLanguage].battle_location}\n`;
+                markdown += `- ${safeText(landmarkData.location)}\n`;
+            }
+
+            if (landmarkData.build_time) {
+                markdown += `\n## ⏳ ${translations[currentLanguage].landmark_build_time}\n`;
+                markdown += `- ${safeText(landmarkData.build_time)}\n`;
+            }
+
+            if (landmarkData.purpose) {
+                markdown += `\n## 🎯 ${translations[currentLanguage].landmark_purpose}\n`;
+                const shortPurpose = landmarkData.purpose.length > 150 ? 
+                    landmarkData.purpose.substring(0, 150) + "..." : 
+                    landmarkData.purpose;
+                markdown += `- ${safeText(shortPurpose)}\n`;
+            }
+
+            if (landmarkData.architecture) {
+                markdown += `\n## 🏛️ ${translations[currentLanguage].landmark_architecture}\n`;
+                const shortArchitecture = landmarkData.architecture.length > 150 ? 
+                    landmarkData.architecture.substring(0, 150) + "..." : 
+                    landmarkData.architecture;
+                markdown += `- ${safeText(shortArchitecture)}\n`;
+            }
+
+            if (landmarkData.dynasty) {
+                markdown += `\n## 👑 ${translations[currentLanguage].landmark_dynasty}\n`;
+                markdown += `- ${safeText(landmarkData.dynasty)}\n`;
+            }
+
+            if (landmarkData.builders && landmarkData.builders.length > 0) {
+                markdown += `\n## 👷 ${translations[currentLanguage].landmark_builders}\n`;
+                landmarkData.builders.slice(0, 3).forEach(builder => {
+                    markdown += `- ✨ ${safeText(builder)}\n`;
+                });
+            }
+
+            if (landmarkData.contents && landmarkData.contents.length > 0) {
+                markdown += `\n## 📦 ${translations[currentLanguage].landmark_contents}\n`;
+                landmarkData.contents.slice(0, 3).forEach(item => {
+                    markdown += `- 📜 ${safeText(item)}\n`;
+                });
+            }
+
+            return markdown;
+        }
+
+        async function renderMarkmap(container, markdown) {
             try {
-                const isBattle = data.factions !== undefined;
-                const isFigure = data.achievements !== undefined && !isBattle;
-                const isLandmark = data.purpose !== undefined && data.architecture !== undefined;
-                
-                let mindmapContent = "";
-                
-                if (isBattle) {
-                    mindmapContent = generateBattleMindmap(data);
-                } else if (isFigure) {
-                    mindmapContent = generateFigureMindmap(data);
-                } else if (isLandmark) {
-                    mindmapContent = generateLandmarkMindmap(data);
-                }
+                const contentDiv = container.querySelector('.mindmap-content');
+                if (!contentDiv) return;
 
-                // Xóa nội dung loading cũ
-                container.innerHTML = '';
-                
-                // Tạo title cho mindmap
-                const titleDiv = document.createElement('div');
-                titleDiv.className = 'mindmap-title relative';
-                titleDiv.innerHTML = `
-                    ${isLandmark ? translations[currentLanguage].landmark_mindmap_title : 
-                      isFigure ? translations[currentLanguage].figure_mindmap_title : 
-                      translations[currentLanguage].mindmap_title}: ${data.name || "Thông tin"}
-                    <span class="close-btn absolute top-2 right-2 cursor-pointer hover:text-accent" onclick="this.parentElement.parentElement.remove()">
-                        <i class="fas fa-times"></i>
-                    </span>
-                `;
-                container.appendChild(titleDiv);
+                // Tạo container cho markmap
+                const mindmapContainer = document.createElement('div');
+                mindmapContainer.className = 'mindmap-container';
+                mindmapContainer.id = 'mindmap-' + Math.random().toString(36).substr(2, 9);
+                contentDiv.innerHTML = '';
+                contentDiv.appendChild(mindmapContainer);
 
-                // Tạo div chứa mindmap
-                const mindmapDiv = document.createElement('div');
-                mindmapDiv.className = 'mindmap';
-                mindmapDiv.textContent = mindmapContent;
-                container.appendChild(mindmapDiv);
+                // Tạo svg element
+                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svg.setAttribute('width', '100%');
+                svg.setAttribute('height', '100%');
+                mindmapContainer.appendChild(svg);
 
-                // Render mindmap
-                try {
-                    await mermaid.run({
-                        nodes: [mindmapDiv],
+                // Transform markdown thành root node
+                const { root } = transformer.transform(markdown);
+
+                // Tạo markmap instance
+                const { Markmap } = window.markmap;
+                const mm = Markmap.create(svg, {
+                    duration: 500,
+                    nodeMinHeight: 16,
+                    spacingVertical: 5,
+                    spacingHorizontal: 80,
+                    autoFit: true,
+                    fitRatio: 0.95,
+                }, root);
+
+                // Lưu instance vào container để sử dụng cho các nút zoom
+                container.mm = mm;
+
+                // Gán các nút điều khiển
+                const zoomInBtn = container.querySelector('.zoom-in');
+                const zoomOutBtn = container.querySelector('.zoom-out');
+                const saveImageBtn = container.querySelector('.save-image');
+
+                if (zoomInBtn) {
+                    zoomInBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (container.mm) {
+                            container.mm.rescale(1.2);
+                        }
                     });
-                    
-                    // Thêm class cho các node để tạo màu sắc
-                    setTimeout(() => {
-                        addColorClassesToMindmap(mindmapDiv);
-                    }, 100);
-                    
-                } catch (mermaidError) {
-                    console.error("Lỗi render Mermaid:", mermaidError);
-                    container.innerHTML = `
-                        <div class="mindmap-title relative">
-                            ${isLandmark ? translations[currentLanguage].landmark_mindmap_title : 
-                              isFigure ? translations[currentLanguage].figure_mindmap_title : 
-                              translations[currentLanguage].mindmap_title}: ${data.name || "Thông tin"}
-                            <span class="close-btn absolute top-2 right-2 cursor-pointer hover:text-accent" onclick="this.parentElement.parentElement.remove()">
-                                <i class="fas fa-times"></i>
-                            </span>
-                        </div>
-                        <div class="mindmap-error">${translations[currentLanguage].processing_error}</div>
-                    `;
                 }
+
+                if (zoomOutBtn) {
+                    zoomOutBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (container.mm) {
+                            container.mm.rescale(0.8);
+                        }
+                    });
+                }
+
+                if (saveImageBtn) {
+                    saveImageBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const svg = container.querySelector('svg');
+                        if (svg) {
+                            const svgData = new XMLSerializer().serializeToString(svg);
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+                            const img = new Image();
+                            img.onload = () => {
+                                canvas.width = img.width;
+                                canvas.height = img.height;
+                                ctx.drawImage(img, 0, 0);
+                                const link = document.createElement('a');
+                                const title = container.querySelector('.mindmap-title span')?.textContent || 'mindmap';
+                                link.download = `${title.replace(/[^a-zA-Z0-9]/g, '_')}_mindmap.png`;
+                                link.href = canvas.toDataURL('image/png');
+                                link.click();
+                            };
+                            img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+                        }
+                    });
+                }
+
+                // Fit sau khi render
+                setTimeout(() => {
+                    mm.fit();
+                    
+                    // Thêm class cho root node
+                    const rootNode = svg.querySelector('.markmap-node');
+                    if (rootNode) {
+                        rootNode.classList.add('root-node');
+                    }
+                }, 100);
+
             } catch (error) {
-                console.error("Lỗi khi tạo sơ đồ tư duy:", error);
-                container.innerHTML = `
-                    <div class="mindmap-title relative">
-                        Sơ Đồ Tư Duy
-                        <span class="close-btn absolute top-2 right-2 cursor-pointer hover:text-accent" onclick="this.parentElement.parentElement.remove()">
-                            <i class="fas fa-times"></i>
-                        </span>
-                    </div>
+                console.error("Lỗi render markmap:", error);
+                container.querySelector('.mindmap-content').innerHTML = `
                     <div class="mindmap-error">${translations[currentLanguage].processing_error}</div>
                 `;
             }
         }
 
-        function generateBattleMindmap(battleData) {
-            const safeText = (text) => {
-                if (!text) return "";
-                return text.toString()
-                    .replace(/"/g, "'")
-                    .replace(/[()<>[\]&:;]/g, "")
-                    .replace(/\n/g, " ")
-                    .replace(/\s+/g, " ")
-                    .trim()
-                    .substring(0, 100);
-            };
-
-            let mermaidCode = `mindmap\n`;
-
-            // Root node
-            mermaidCode += `  root(("${safeText(battleData.name) || 'Trận chiến'}"))\n`;
-            mermaidCode += `    classDef root fill:#F8F9F6,stroke:#F4A261,stroke-width:3px,color:#333333\n`;
-
-            // Time node
-            if (battleData.time) {
-                mermaidCode += `  ${translations[currentLanguage].battle_time}("${safeText(battleData.time)}")\n`;
-                mermaidCode += `    classDef time fill:#E6F3F5,stroke:#4A90E2,stroke-width:2px,color:#333333\n`;
-            }
-
-            // Location node
-            if (battleData.location) {
-                mermaidCode += `  ${translations[currentLanguage].battle_location}("${safeText(battleData.location)}")\n`;
-                mermaidCode += `    classDef location fill:#E8F4E8,stroke:#2E7D32,stroke-width:2px,color:#333333\n`;
-            }
-
-            // Factions node
-            if (battleData.factions && battleData.factions.length > 0) {
-                mermaidCode += `  ${translations[currentLanguage].battle_factions}("Các phe")\n`;
-                battleData.factions.forEach((faction, index) => {
-                    const safeFaction = safeText(faction);
-                    mermaidCode += `    ${translations[currentLanguage].battle_factions}_${index}("${safeFaction}")\n`;
-                    
-                    if (battleData.commanders && battleData.commanders[faction]) {
-                        const safeCommander = safeText(battleData.commanders[faction]);
-                        mermaidCode += `      ${translations[currentLanguage].battle_factions}_${index}_cmd("Chỉ huy: ${safeCommander}")\n`;
-                    }
-                });
-                mermaidCode += `    classDef faction fill:#FFF3E0,stroke:#F4A261,stroke-width:2px,color:#333333\n`;
-            }
-
-            // Timeline node
-            if (battleData.timeline && battleData.timeline.length > 0) {
-                mermaidCode += `  ${translations[currentLanguage].battle_timeline}("Diễn biến")\n`;
-                battleData.timeline.forEach((event, index) => {
-                    const safeEvent = safeText(event);
-                    mermaidCode += `    timeline_${index}("${translations[currentLanguage].event} ${index + 1}: ${safeEvent}")\n`;
-                });
-                mermaidCode += `    classDef timeline fill:#E0F2F1,stroke:#00796B,stroke-width:2px,color:#333333\n`;
-            }
-
-            // Outcome node
-            if (battleData.outcome) {
-                mermaidCode += `  ${translations[currentLanguage].battle_outcome}("${safeText(battleData.outcome)}")\n`;
-                mermaidCode += `    classDef outcome fill:#E8EAF6,stroke:#5C6BC0,stroke-width:2px,color:#333333\n`;
-            }
-
-            // Significance node - đã tóm gọn
-            if (battleData.significance) {
-                const shortSignificance = battleData.significance.length > 100 ? 
-                    battleData.significance.substring(0, 100) + "..." : 
-                    battleData.significance;
-                mermaidCode += `  ${translations[currentLanguage].battle_significance}("${safeText(shortSignificance)}")\n`;
-                mermaidCode += `    classDef significance fill:#F3E5F5,stroke:#7B1FA2,stroke-width:2px,color:#333333\n`;
-            }
-
-            console.log("Mã Mermaid trận chiến:", mermaidCode);
-            return mermaidCode;
-        }
-
-        function generateFigureMindmap(figureData) {
-            const safeText = (text) => {
-                if (!text) return "";
-                return text.toString()
-                    .replace(/"/g, "'")
-                    .replace(/[()<>[\]&:;]/g, "")
-                    .replace(/\n/g, " ")
-                    .replace(/\s+/g, " ")
-                    .trim()
-                    .substring(0, 100);
-            };
-
-            let mermaidCode = `mindmap\n`;
-
-            // Root node
-            mermaidCode += `  root(("${safeText(figureData.name) || 'Nhân vật'}"))\n`;
-            mermaidCode += `    classDef root fill:#F8F9F6,stroke:#F4A261,stroke-width:3px,color:#333333\n`;
-
-            // Time node
-            if (figureData.time) {
-                mermaidCode += `  ${translations[currentLanguage].battle_time}("${safeText(figureData.time)}")\n`;
-                mermaidCode += `    classDef time fill:#E6F3F5,stroke:#4A90E2,stroke-width:2px,color:#333333\n`;
-            }
-
-            // Location node
-            if (figureData.location) {
-                mermaidCode += `  ${translations[currentLanguage].birth_place}("${safeText(figureData.location)}")\n`;
-                mermaidCode += `    classDef location fill:#E8F4E8,stroke:#2E7D32,stroke-width:2px,color:#333333\n`;
-            }
-
-            // Achievements node
-            if (figureData.achievements && figureData.achievements.length > 0) {
-                mermaidCode += `  ${translations[currentLanguage].battle_achievements}("Thành tựu")\n`;
-                figureData.achievements.forEach((achievement, index) => {
-                    const safeAchievement = safeText(achievement);
-                    mermaidCode += `    achievement_${index}("${safeAchievement}")\n`;
-                });
-                mermaidCode += `    classDef achievement fill:#E1F5FE,stroke:#0288D1,stroke-width:2px,color:#333333\n`;
-            }
-
-            // Significance node - đã tóm gọn
-            if (figureData.significance) {
-                const shortSignificance = figureData.significance.length > 100 ? 
-                    figureData.significance.substring(0, 100) + "..." : 
-                    figureData.significance;
-                mermaidCode += `  ${translations[currentLanguage].battle_significance}("${safeText(shortSignificance)}")\n`;
-                mermaidCode += `    classDef significance fill:#F3E5F5,stroke:#7B1FA2,stroke-width:2px,color:#333333\n`;
-            }
-
-            console.log("Mã Mermaid nhân vật:", mermaidCode);
-            return mermaidCode;
-        }
-
-        function generateLandmarkMindmap(landmarkData) {
-            const safeText = (text) => {
-                if (!text) return "";
-                return text.toString()
-                    .replace(/"/g, "'")
-                    .replace(/[()<>[\]&:;]/g, "")
-                    .replace(/\n/g, " ")
-                    .replace(/\s+/g, " ")
-                    .trim()
-                    .substring(0, 100);
-            };
-
-            let mermaidCode = `mindmap\n`;
-
-            // Root node
-            mermaidCode += `  root(("${safeText(landmarkData.name) || 'Địa danh'}"))\n`;
-            mermaidCode += `    classDef root fill:#F8F9F6,stroke:#F4A261,stroke-width:3px,color:#333333\n`;
-
-            // Location node
-            if (landmarkData.location) {
-                mermaidCode += `  ${translations[currentLanguage].battle_location}("${safeText(landmarkData.location)}")\n`;
-                mermaidCode += `    classDef location fill:#E8F4E8,stroke:#2E7D32,stroke-width:2px,color:#333333\n`;
-            }
-
-            // Build time node
-            if (landmarkData.build_time) {
-                mermaidCode += `  ${translations[currentLanguage].landmark_build_time}("${safeText(landmarkData.build_time)}")\n`;
-                mermaidCode += `    classDef time fill:#E6F3F5,stroke:#4A90E2,stroke-width:2px,color:#333333\n`;
-            }
-
-            // Purpose node
-            if (landmarkData.purpose) {
-                const shortPurpose = landmarkData.purpose.length > 100 ? 
-                    landmarkData.purpose.substring(0, 100) + "..." : 
-                    landmarkData.purpose;
-                mermaidCode += `  ${translations[currentLanguage].landmark_purpose}("${safeText(shortPurpose)}")\n`;
-                mermaidCode += `    classDef purpose fill:#FFF8E1,stroke:#F4A261,stroke-width:2px,color:#333333\n`;
-            }
-
-            // Architecture node
-            if (landmarkData.architecture) {
-                const shortArchitecture = landmarkData.architecture.length > 100 ? 
-                    landmarkData.architecture.substring(0, 100) + "..." : 
-                    landmarkData.architecture;
-                mermaidCode += `  ${translations[currentLanguage].landmark_architecture}("${safeText(shortArchitecture)}")\n`;
-                mermaidCode += `    classDef architecture fill:#E0F2F1,stroke:#00796B,stroke-width:2px,color:#333333\n`;
-            }
-
-            // Dynasty node
-            if (landmarkData.dynasty) {
-                mermaidCode += `  ${translations[currentLanguage].landmark_dynasty}("${safeText(landmarkData.dynasty)}")\n`;
-                mermaidCode += `    classDef dynasty fill:#FFF3E0,stroke:#F4A261,stroke-width:2px,color:#333333\n`;
-            }
-
-            // Builders node - tóm gọn nếu có nhiều
-            if (landmarkData.builders && landmarkData.builders.length > 0) {
-                mermaidCode += `  ${translations[currentLanguage].landmark_builders}("Người xây dựng")\n`;
-                const displayBuilders = landmarkData.builders.length > 3 ? 
-                    landmarkData.builders.slice(0, 3) : landmarkData.builders;
-                displayBuilders.forEach((builder, index) => {
-                    const safeBuilder = safeText(builder);
-                    mermaidCode += `    builder_${index}("${safeBuilder}")\n`;
-                });
-                if (landmarkData.builders.length > 3) {
-                    mermaidCode += `    builder_more("... và ${landmarkData.builders.length - 3} người khác")\n`;
-                }
-                mermaidCode += `    classDef builder fill:#E8F5E9,stroke:#388E3C,stroke-width:2px,color:#333333\n`;
-            }
-
-            // Contents node - tóm gọn nếu có nhiều
-            if (landmarkData.contents && landmarkData.contents.length > 0) {
-                mermaidCode += `  ${translations[currentLanguage].landmark_contents}("Nội dung")\n`;
-                const displayContents = landmarkData.contents.length > 3 ? 
-                    landmarkData.contents.slice(0, 3) : landmarkData.contents;
-                displayContents.forEach((item, index) => {
-                    const safeItem = safeText(item);
-                    mermaidCode += `    content_${index}("${safeItem}")\n`;
-                });
-                if (landmarkData.contents.length > 3) {
-                    mermaidCode += `    content_more("... và ${landmarkData.contents.length - 3} nội dung khác")\n`;
-                }
-                mermaidCode += `    classDef content fill:#FCE4EC,stroke:#C2185B,stroke-width:2px,color:#333333\n`;
-            }
-
-            console.log("Mã Mermaid địa danh:", mermaidCode);
-            return mermaidCode;
-        }
-
-        function addColorClassesToMindmap(mindmapDiv) {
-            try {
-                const nodes = mindmapDiv.querySelectorAll('.node');
-                
-                nodes.forEach(node => {
-                    const text = node.textContent || '';
-                    
-                    if (text.includes(translations[currentLanguage].battle_time) || 
-                        text.includes(translations[currentLanguage].landmark_build_time)) {
-                        node.classList.add('time-node');
-                    } else if (text.includes(translations[currentLanguage].battle_location) || 
-                              text.includes(translations[currentLanguage].birth_place)) {
-                        node.classList.add('location-node');
-                    } else if (text.includes(translations[currentLanguage].battle_factions)) {
-                        node.classList.add('faction-node');
-                    } else if (text.includes(translations[currentLanguage].battle_commanders)) {
-                        node.classList.add('commander-node');
-                    } else if (text.includes(translations[currentLanguage].battle_outcome)) {
-                        node.classList.add('outcome-node');
-                    } else if (text.includes(translations[currentLanguage].battle_significance)) {
-                        node.classList.add('significance-node');
-                    } else if (text.includes(translations[currentLanguage].battle_achievements)) {
-                        node.classList.add('achievement-node');
-                    } else if (text.includes(translations[currentLanguage].landmark_purpose)) {
-                        node.classList.add('purpose-node');
-                    } else if (text.includes(translations[currentLanguage].landmark_architecture)) {
-                        node.classList.add('architecture-node');
-                    } else if (text.includes(translations[currentLanguage].landmark_contents)) {
-                        node.classList.add('content-node');
-                    } else if (text.includes(translations[currentLanguage].landmark_builders)) {
-                        node.classList.add('builder-node');
-                    } else if (text.includes(translations[currentLanguage].landmark_dynasty)) {
-                        node.classList.add('dynasty-node');
-                    }
-                });
-            } catch (e) {
-                console.error("Lỗi thêm màu cho mindmap:", e);
-            }
-        }
-
         function addMarker(lat, lng, title) {
-            // Xóa marker cũ nếu có
             markers.forEach(marker => {
                 if (marker && marker.remove) {
                     marker.remove();
@@ -2937,6 +2904,16 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                 }
             }
 
+            let heroesHtml = '';
+            if (data.heroes && data.heroes.length > 0) {
+                heroesHtml = data.heroes.map(hero => `<li>${hero}</li>`).join('');
+            }
+
+            let keyLocationsHtml = '';
+            if (data.key_locations && data.key_locations.length > 0) {
+                keyLocationsHtml = data.key_locations.map(loc => `<li>${loc}</li>`).join('');
+            }
+
             return `
     <div class="battle-box">
         <h3><i class="fas fa-clock"></i> ${translations[currentLanguage].battle_time}</h3>
@@ -2950,6 +2927,26 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
     <div class="battle-box">
         <h3><i class="fas fa-align-left"></i> ${translations[currentLanguage].battle_summary}</h3>
         <p>${data.summary || translations[currentLanguage].no_summary}</p>
+    </div>
+    <div class="battle-box">
+        <h3><i class="fas fa-users"></i> ${translations[currentLanguage].battle_troops}</h3>
+        <p>${data.troops || translations[currentLanguage].unknown}</p>
+    </div>
+    <div class="battle-box">
+        <h3><i class="fas fa-tactic"></i> ${translations[currentLanguage].battle_tactics}</h3>
+        <p>${data.tactics || translations[currentLanguage].unknown}</p>
+    </div>
+    <div class="battle-box">
+        <h3><i class="fas fa-heart-broken"></i> ${translations[currentLanguage].battle_casualties}</h3>
+        <p>${data.casualties || translations[currentLanguage].unknown}</p>
+    </div>
+    <div class="battle-box">
+        <h3><i class="fas fa-star"></i> ${translations[currentLanguage].battle_heroes}</h3>
+        <ul>${heroesHtml || `<li>${translations[currentLanguage].unknown}</li>`}</ul>
+    </div>
+    <div class="battle-box">
+        <h3><i class="fas fa-map-pin"></i> ${translations[currentLanguage].key_locations}</h3>
+        <ul>${keyLocationsHtml || `<li>${translations[currentLanguage].unknown}</li>`}</ul>
     </div>
     <div class="battle-box">
         <h3><i class="fas fa-users"></i> ${translations[currentLanguage].battle_factions}</h3>
