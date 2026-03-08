@@ -139,7 +139,7 @@
         /* ===== SƠ ĐỒ TƯ DUY SIÊU NGẦU (TỪ CODE GỐC) ===== */
         .mindmap-sieu-ngau {
             width: 100%;
-            height: 300px; /* Giảm từ 500px xuống 300px */
+            height: 300px;
             background: white;
             border-radius: 12px;
             margin: 1rem 0;
@@ -349,6 +349,7 @@
             border-left: 4px solid var(--accent-orange);
             transition: all 0.3s ease;
             width: 100%;
+            position: relative;
         }
 
         .result-container .result-title {
@@ -364,15 +365,51 @@
             font-family: 'Playfair Display', serif;
         }
 
+        /* FIX 2 & 3: Dấu chấm đen thụt vào và dấu X ở góc trên bên phải */
+        .battle-box ul {
+            padding-left: 1.5rem;
+            list-style-position: outside;
+        }
+
+        .battle-box li {
+            margin-left: 0.5rem;
+        }
+
         .close-btn {
             cursor: pointer;
             font-size: 1.75rem;
             color: var(--text-secondary);
             transition: color 0.2s;
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
         }
 
         .close-btn:hover {
             color: var(--accent-orange);
+        }
+
+        /* FIX 5: Điều chỉnh vị trí nút đóng và nút chuyển ngôn ngữ */
+        .history-info-box .close-btn,
+        .result-container .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding-right: 2rem;
+        }
+
+        .language-switch {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+            margin-right: 0;
         }
 
         .image-container {
@@ -382,6 +419,7 @@
             overflow: hidden;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             border: 1px solid var(--border-light);
+            position: relative;
         }
 
         .image-container.expanded {
@@ -435,12 +473,12 @@
         .search-wrapper {
             position: relative;
             margin-bottom: 1rem;
-            margin-top: 1rem; /* Dịch xuống dưới */
+            margin-top: 1rem;
         }
 
         #search-input {
             width: 100%;
-            padding: 0.75rem 5rem 0.75rem 1.2rem; /* Giảm padding để thành 1 hàng */
+            padding: 0.75rem 5rem 0.75rem 1.2rem;
             border-radius: 2rem;
             border: 1px solid var(--border-light);
             background-color: var(--input-bg);
@@ -448,10 +486,10 @@
             font-family: 'Inter', sans-serif;
             font-size: 1rem;
             line-height: 1.5;
-            resize: none; /* Không cho kéo */
+            resize: none;
             transition: all 0.2s;
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
-            height: 48px; /* Chiều cao cố định 1 hàng */
+            height: 48px;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
@@ -482,9 +520,9 @@
             color: white;
             border: none;
             border-radius: 2rem;
-            padding: 0.4rem 1rem; /* Giảm padding */
+            padding: 0.4rem 1rem;
             font-weight: 600;
-            font-size: 0.9rem; /* Giảm font size */
+            font-size: 0.9rem;
             cursor: pointer;
             transition: none;
             display: flex;
@@ -510,8 +548,8 @@
 
         .sidebar-header {
             border-bottom: 1px solid var(--border-light);
-            padding-bottom: 0.01rem; /* Giảm padding bottom */
-            margin-bottom: 0.01rem; /* Giảm margin bottom */
+            padding-bottom: 0.01rem;
+            margin-bottom: 0.01rem;
             background-color: var(--card-bg);
             border-radius: 1rem 1rem 0 0;
         }
@@ -968,14 +1006,6 @@
             color: var(--text-primary);
         }
 
-        .language-switch {
-            display: flex;
-            align-items: center;
-            position: relative;
-            right: 35px; 
-            margin-top: 15px; 
-        }
-
         .switch {
             position: relative;
             display: inline-block;
@@ -1024,13 +1054,6 @@
 
         input:checked + .slider:before {
             transform: translateX(30px);
-        }
-
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
         }
 
         .header-title h2 {
@@ -1134,7 +1157,7 @@
                     </div>
                 </div>
 
-                <form id="search-form" class="mt-2"> <!-- Giảm margin top -->
+                <form id="search-form" class="mt-2">
                     <div class="search-wrapper">
                         <textarea id="search-input" rows="1"
                             class="w-full"
@@ -1208,6 +1231,7 @@
         let speechProgressInterval;
         let currentSpeechText = '';
         let keyLocations = [];
+        let currentMindmapInstance = null; // Lưu instance markmap hiện tại để zoom
 
         // ==================== BIẾN MARKMAP (TỪ CODE GỐC) ====================
         let transformer = null;
@@ -2561,7 +2585,7 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                             <i class="fas fa-search-minus"></i>
                         </button>
                         <button class="control-btn save-image" title="${translations[currentLanguage].save_image}">
-                            <i class="fas fa-camera"></i>
+                            <i class="fas fa-save"></i>
                         </button>
                     </div>
                 </div>
@@ -2804,6 +2828,7 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
 
                 // Lưu instance vào container để sử dụng cho các nút zoom
                 container.mm = mm;
+                currentMindmapInstance = mm;
 
                 // Gán các nút điều khiển
                 const zoomInBtn = container.querySelector('.zoom-in');
@@ -2828,26 +2853,84 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                     });
                 }
 
+                // FIX 4 & 7: Cho phép zoom và lưu ảnh ở chế độ toàn màn hình
                 if (saveImageBtn) {
-                    saveImageBtn.addEventListener('click', (e) => {
+                    saveImageBtn.addEventListener('click', async (e) => {
                         e.stopPropagation();
+                        
+                        // Kiểm tra xem sơ đồ tư duy có đang ở chế độ mở rộng không
+                        const isExpanded = container.classList.contains('expanded');
+                        
+                        // Nếu chưa mở rộng, tạm thời mở rộng để chụp ảnh full
+                        if (!isExpanded) {
+                            container.classList.add('expanded');
+                            const controls = container.querySelector('.mindmap-controls');
+                            if (controls) {
+                                controls.classList.remove('mindmap-controls-hidden');
+                            }
+                            // Chờ cho việc mở rộng hoàn tất và fit
+                            await new Promise(resolve => setTimeout(resolve, 100));
+                            if (container.mm) {
+                                container.mm.fit();
+                            }
+                            await new Promise(resolve => setTimeout(resolve, 100));
+                        }
+
                         const svg = container.querySelector('svg');
                         if (svg) {
-                            const svgData = new XMLSerializer().serializeToString(svg);
-                            const canvas = document.createElement('canvas');
-                            const ctx = canvas.getContext('2d');
-                            const img = new Image();
-                            img.onload = () => {
-                                canvas.width = img.width;
-                                canvas.height = img.height;
-                                ctx.drawImage(img, 0, 0);
-                                const link = document.createElement('a');
-                                const title = container.querySelector('.mindmap-title span')?.textContent || 'mindmap';
-                                link.download = `${title.replace(/[^a-zA-Z0-9]/g, '_')}_mindmap.png`;
-                                link.href = canvas.toDataURL('image/png');
-                                link.click();
-                            };
-                            img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+                            try {
+                                // Lấy kích thước thực tế của SVG
+                                const bbox = svg.getBBox();
+                                const svgData = new XMLSerializer().serializeToString(svg);
+                                
+                                // Tạo canvas với kích thước phù hợp
+                                const canvas = document.createElement('canvas');
+                                const ctx = canvas.getContext('2d');
+                                const img = new Image();
+                                
+                                img.onload = () => {
+                                    // Đặt kích thước canvas theo kích thước ảnh
+                                    canvas.width = img.width;
+                                    canvas.height = img.height;
+                                    ctx.drawImage(img, 0, 0);
+                                    
+                                    const link = document.createElement('a');
+                                    const title = container.querySelector('.mindmap-title span')?.textContent || 'mindmap';
+                                    link.download = `${title.replace(/[^a-zA-Z0-9]/g, '_')}_mindmap.png`;
+                                    link.href = canvas.toDataURL('image/png');
+                                    link.click();
+                                    
+                                    // Nếu không phải chế độ mở rộng ban đầu, đóng lại
+                                    if (!isExpanded) {
+                                        container.classList.remove('expanded');
+                                        const controls = container.querySelector('.mindmap-controls');
+                                        if (controls) {
+                                            controls.classList.add('mindmap-controls-hidden');
+                                        }
+                                        if (container.mm) {
+                                            container.mm.fit();
+                                        }
+                                    }
+                                };
+                                
+                                // Thêm style để đảm bảo ảnh rõ nét
+                                const style = '<style>* { margin: 0; padding: 0; } svg { background: white; }</style>';
+                                const svgWithStyle = svgData.replace('<svg', `<svg xmlns="http://www.w3.org/2000/svg"`);
+                                img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(style + svgWithStyle)));
+                            } catch (error) {
+                                console.error("Lỗi khi lưu ảnh:", error);
+                                // Nếu có lỗi, đảm bảo đóng chế độ mở rộng nếu cần
+                                if (!isExpanded) {
+                                    container.classList.remove('expanded');
+                                    const controls = container.querySelector('.mindmap-controls');
+                                    if (controls) {
+                                        controls.classList.add('mindmap-controls-hidden');
+                                    }
+                                    if (container.mm) {
+                                        container.mm.fit();
+                                    }
+                                }
+                            }
                         }
                     });
                 }
@@ -2954,7 +3037,7 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
     </div>
     <div class="battle-box">
         <h3><i class="fas fa-crown"></i> ${translations[currentLanguage].battle_commanders}</h3>
-        <ul>${commandersHtml || `<li>${translations[currentLanguage].unknown}</li>`}</ul>
+        <ul>${commandersHtml || `<li>${translations[currentLanguage].unknown</li>`}</ul>
     </div>
     ${data.outcome ? `
     <div class="battle-box">
@@ -3072,7 +3155,7 @@ TRẢ LỜI CHỈ BẰNG JSON, KHÔNG CÓ VĂN BẢN NÀO KHÁC. Cung cấp thô
                 <div class="inline-block max-w-[85%] rounded-xl p-4 ${bubbleClass} relative">
                     <div class="message-content">${translatedContent}</div>
                     ${role === 'assistant' ? `
-                    <span class="close-btn absolute top-2 right-2 cursor-pointer hover:text-accent" onclick="this.parentElement.parentElement.remove()">
+                    <span class="close-btn" onclick="this.parentElement.parentElement.remove()">
                         <i class="fas fa-times"></i>
                     </span>
                     ` : ''}
